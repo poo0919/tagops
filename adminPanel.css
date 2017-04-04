@@ -1,0 +1,13 @@
+/* css file for html elements in adminPanel */
+
+    #tab_categories,#tab_projects,#tab_employees,#update_project,#update_employee,#new_user,#new_admin,#tab_assets,#update_inventoryType,#update_rentalCompany{
+        background: rgb(239, 250, 250   );
+    }
+    th{
+        background: rgb(226, 237, 235    );
+    }
+    .spacer
+	{
+	    width: 100%;
+	    height: 100px;
+	}

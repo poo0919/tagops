@@ -1,0 +1,2 @@
+amount,date,details,category,payment mode,bill,reimbursed,email
+>0,YY-MM-DD,text,text,Cash/Online (Net banking/CC/DC)/Funds transfer,Yes/No,submitted/approved/rejected,registered mail id

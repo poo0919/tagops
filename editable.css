@@ -1,0 +1,19 @@
+/* css file for editing cl+pl+ml in leave management tab */
+
+.editbox
+{
+display:none
+}
+
+.editbox
+{
+font-size:14px;
+width:270px;
+background-color:#ffffcc;
+border:solid 1px #000;
+padding:4px;
+}
+.edit_tr:hover
+{
+cursor:pointer;
+}

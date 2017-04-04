@@ -1,0 +1,72 @@
+@import url(http://fonts.googleapis.com/css?family=Montserrat:400,700);
+
+body {
+ background: #eeeeee;
+}
+
+.nav-pills>li.active>a, .nav-pills>li.active>a:focus, .nav-pills>li.active>a:hover {
+    color: #373737;
+    background-color: #eeeeee;
+    border-bottom: 5px solid #373737;
+    border-radius: 0px;
+}
+.nav>li>a{
+	color: #a8a8a8;
+    background-color: #eeeeee;
+
+}
+
+
+
+
+
+th{
+  text-align: center;
+  
+  background-color: #e1e1e1;
+}
+td{
+
+  text-align: center;
+}
+
+
+form{
+	font:   16px Montserrat ;
+}
+.form-control{
+	border-radius: 0;
+}
+.input-group-addon{
+	border-radius: 0;
+}
+#submit-data-button {
+	border-radius: 0;
+	background-color: #7cc576; color: #ffffff;
+	height: 40px;
+	width: 150px;
+	font:   16px Montserrat ;color:  #ffffff;
+}
+#cancel-user-button {
+	border-radius: 0;
+	background-color: #ec585d; color: #ffffff;
+	height: 40px;
+	width: 150px;
+	font:   16px Montserrat ;color:  #ffffff;
+}
+
+#submit-leaves{
+	border-radius: 0;
+	background-color: #7cc576; color: #ffffff;
+	height: 40px;
+	width: 150px;
+	font:   16px Montserrat ;
+
+}
+#cancel-leaves{
+	border-radius: 0;
+	background-color: #ec585d; color: #ffffff;
+	font:   16px Montserrat ;
+	height: 40px;
+	width: 150px;
+}
