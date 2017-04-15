@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+ <!--   <link rel="stylesheet" href="/resources/demos/style.css">  -->
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+ <!--   <link href="css/bootstrap.min.css" rel="stylesheet">  -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+</head>
+<body>
+
+</body>
+<script type="text/javascript">
+ $(document).ready(function(){
+ 	$.ajax({
+        
+        url: 'orgChartApi.php',
+        type: 'GET',
+     
+        success: function(json){
+            for (var i=0; i <json.length; i++) {
+                var tr='<tr><td>' + (i+1) + '</td>'+
+                        '<td>' + json[i].username + '</td>'+
+                        '<td>' + json[i].dealership_name + '</td>'+
+                        '<td>' + json[i].first_name+ '</td>'+
+                        '<td>' + json[i].phone+ '</td>'+
+                        '<td>' + json[i].total_loyalty+ ' points</td>'+
+                        '<td><button type="button" class="btn btn-link"  id='+json[i].id+' onclick="viewRecords('+json[i].id+')" style="color: #ffffff ; background-color: #EB5757 ;border-color: #EB5757 ;text-decoration:none;"><img src="../assets/images/viewRecord.png"> View Record</button></td></tr>';
+                        var key,val;
+                        key='name'+json[i].id; val=json[i].first_name;
+                        localStorage.setItem(key,val);
+                                
+                $('#dealersListData').append(tr);
+
+            }                                           
+        },
+        error: function(xhr,status,error){
+            console.log(xhr+status+error);
+        }
+    });
+ });
+	
+</script>
+</html>

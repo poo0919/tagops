@@ -49,6 +49,24 @@ include 'adminBars.php';
   <div class="spacer"></div>
         <section class="well">
 
+        <form class="form-inline" method="GET" action="<?php echo $_SERVER['PHP_SELF']; ?>" id="form-sort" >
+                <div class="form-group" >
+                    <select name="sort" class="form-control" id="sort" >
+                        <option value="project" >Project</option>
+                        <option value="amount">Amount</option>
+                        <option value="date" selected>Date</option>
+                    </select>
+                    <input type="hidden" name="id" id="id" value="<?php
+                   
+                          $user_id=$_GET['id'];
+                          echo $user_id;
+                                            
+                        ?>" />
+                  
+                    <button type="submit" class="btn btn-info" ><b>Sort</b></button>              
+                </div>
+              </form>
+
             <ul class="nav navbar-nav navbar-right">
             <li style="padding-top: 5px;padding-right: 10px;"> <form class="form-inline" method="GET" action="<?php echo $_SERVER['PHP_SELF']; ?>" id="form-sort" >
                 <div class="form-group" >

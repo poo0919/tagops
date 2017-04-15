@@ -64,6 +64,8 @@ include 'adminBars.php';
                       <th>S.no</th>
                       <th>Name</th>
                       <th>Wallet Balance</th>
+                      <th>Expense Download</th>
+                      <th>Wallet Download</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -90,13 +92,13 @@ include 'adminBars.php';
                                         while($row = $result->fetch_array()){
                                             $walletBalance=$row['sumTransactions'];
                                             if($walletBalance<0){
-                                                echo "<tr><td align='left'>".$index."</td><td align='left'><a href=employee.php?id=".$user_id.">".$name."</a></td><td>".$walletBalance."</td><tr>";
+                                                echo "<tr><td align='left'>".$index."</td><td align='left'><a href=employee.php?id=".$user_id.">".$name."</a></td><td>".$walletBalance."</td><td><a href='writeToEmployeeExpenseExcel.php?EMPLOYEEID=".$user_id."' ><span class='glyphicon glyphicon-download-alt'></span></a></td><td><a href='writeToEmployeeWalletExcel.php?EMPLOYEEID=".$user_id."' ><span class='glyphicon glyphicon-download'></span></a></td><tr>";
                                                 $index++;
                                             }
                                         }
                                     }else{
 
-                                        echo "<tr><td align='left'>".$index."</td><td align='left'><a href=employee.php?id=".$user_id.">".$name."</a></td><td>0</td><tr>";
+                                        echo "<tr><td align='left'>".$index."</td><td align='left'><a href=employee.php?id=".$user_id.">".$name."</a></td><td>0</td><td><a href='writeToEmployeeExpenseExcel.php?EMPLOYEEID=".$user_id."' ><span class='glyphicon glyphicon-download-alt'></span></a></td><tr>";
                                     }
 
                                 }
@@ -122,7 +124,7 @@ include 'adminBars.php';
                                             if(empty($walletBalance))
                                                 $walletBalance="0";
                                              
-                                            echo "<tr><td align='left'>".$index."</td><td align='left'><a href=employee.php?id=".$user_id.">".$name."</a></td><td>".$walletBalance."</td><tr>";
+                                            echo "<tr><td align='left'>".$index."</td><td align='left'><a href=employee.php?id=".$user_id.">".$name."</a></td><td>".$walletBalance."</td><td><a href='writeToEmployeeExpenseExcel.php?EMPLOYEEID=".$user_id."' ><span class='glyphicon glyphicon-download-alt'></span></a></td><tr>";
                                             $index++;
                                         }
                                     }
@@ -153,7 +155,7 @@ include 'adminBars.php';
                                                 if(empty($walletBalance))
                                                     $walletBalance="0";
                                                  
-                                                echo "<tr><td align='left'>".$index."</td><td align='left'><a href=employee.php?id=".$user_id.">".$name."</a></td><td>".$walletBalance."</td><tr>";
+                                                echo "<tr><td align='left'>".$index."</td><td align='left'><a href=employee.php?id=".$user_id.">".$name."</a></td><td>".$walletBalance."</td><td><a href='writeToEmployeeExpenseExcel.php?EMPLOYEEID=".$user_id."' ><span class='glyphicon glyphicon-download-alt'></span></a></td><tr>";
                                                 $index++;
                                             }
                                         }
@@ -275,6 +277,18 @@ include 'adminBars.php';
       
 
     });
+    function downloadEmployeeExpenses(userId){
+        alert(userId);
+        $.ajax({
+            url: "writeToEmployeeExpenseExcel.php",
+            type: "POST",
+            data: "EMPLOYEEID="+userId,
+            success: function(json){
+            //    $("#assetsData").append(json);
+                                                                    
+            }
+        })
+    }
     </script>
      
    

@@ -64,7 +64,7 @@ include 'adminBars.php';
 
                                 <tbody>
                                 <?php
-
+//<td >".$ro2['rh']."</td>
                                 
                                     $q1="select * from user where status='1' order by name ";
                                     $re1=mysqli_query($conn,$q1)or die(mysqli_error($conn));
@@ -88,7 +88,10 @@ include 'adminBars.php';
                                                             <input type='text' value='".$ro2['pl_cl_ml']."' class='editbox' id='first_input_".$ro2['id']."' style='display:none;'>
                                                         </td>
                                                         <td>".$ro2['comp_off']."</td>
-                                                        <td>".$ro2['rh']."</td>
+                                                        <td class='edit_td1' id='".$ro2['id']."'>
+                                                            <span id='second_".$ro2['id']."' class='text'>".$ro2['rh']."</span>
+                                                            <input type='text' value='".$ro2['rh']."' class='editbox' id='second_input_".$ro2['id']."' style='display:none;'>
+                                                        </td>
                                                         <td >".$total."</td>
                                                         <td class='accordion-toggle ' data-toggle='collapse' data-target='#a".$index."' ><span class='glyphicon glyphicon-chevron-down'></span></td>
                                                         
@@ -112,7 +115,7 @@ include 'adminBars.php';
                                                             ";
 
 
-                                            $q3="select * from leave_data where user_id='$user_id' AND type_id='2' ";
+                                            $q3="select * from leave_data where user_id='$user_id' AND type_id='2' order by against_date DESC ";
                                             $re3=mysqli_query($conn,$q3)or die(mysqli_error($conn));
                                             if ($re3->num_rows > 0) {
                                               $in=1;
@@ -294,7 +297,48 @@ $(".editbox").mouseup(function()
 return false
 });
 
+$(".edit_td1").click(function()
+{
+    var ID=$(this).attr('id');
+    $("#second_"+ID).css("display","none")
+    $("#second_input_"+ID).css("display","block")
+}).change(function()
+{
+    var ID=$(this).attr('id');
+    var first=$("#second_input_"+ID).val();
+    var dataString = 'id='+ ID +'&first='+first;
 
+    if(first.length>0)
+    {
+
+    $.ajax({
+    type: "POST",
+    url: "rh_edit_ajax.php",
+    data: dataString,
+    cache: false,
+    success: function(data)
+    {
+      if(data==1)
+    {
+      alert("success");
+      window.location.reload();
+      }  
+    
+    }
+    });
+    }
+    else
+    {
+    alert('Enter something.');
+    }
+
+});
+
+// Edit input box click action
+$(".editbox").mouseup(function() 
+{
+return false
+});
 
 
 // Outside click action

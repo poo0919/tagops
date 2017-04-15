@@ -28,10 +28,10 @@ if ($re2->num_rows > 0) {
 
 $status="Free/Given/Assigned/Returned";
 $email="0/registered email-id";
-$line2=$asset_type.",text,Tagbin/Rent,NA/".$rentCompanies.",".$status.",".$email;
+$line2=$asset_type.",text,numbers,Tagbin/Rent,NA/".$rentCompanies.",".$status.",".$email;
 
 $data = array(
-        "asset_type,description,owner,owned by,status,email",
+        "asset_type,description,price,owner,owned by,status,email",
         $line2
 );
 

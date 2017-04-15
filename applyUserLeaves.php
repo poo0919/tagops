@@ -4,10 +4,15 @@ include 'empSession.php';
 //apply for leaves and add leave data to db
     $user_id=$_POST['id'];
     $leaveType1=$_POST['leaveType1']; $againstDate1=$_POST['againstDate1']; $forDate1=$_POST['forDate1']; $rhDate1=$_POST['rhDate1']; $reason1=$_POST['reason1'];
+        $halfFull1=$_POST['halfFull1'];
     $leaveType2=$_POST['leaveType2']; $againstDate2=$_POST['againstDate2']; $forDate2=$_POST['forDate2']; $rhDate2=$_POST['rhDate2']; $reason2=$_POST['reason2'];
+        $halfFull2=$_POST['halfFull2'];
     $leaveType3=$_POST['leaveType3']; $againstDate3=$_POST['againstDate3']; $forDate3=$_POST['forDate3']; $rhDate3=$_POST['rhDate3']; $reason3=$_POST['reason3'];
+        $halfFull3=$_POST['halfFull3'];
     $leaveType4=$_POST['leaveType4']; $againstDate4=$_POST['againstDate4']; $forDate4=$_POST['forDate4']; $rhDate4=$_POST['rhDate4']; $reason4=$_POST['reason4'];
+        $halfFull4=$_POST['halfFull4'];
     $leaveType5=$_POST['leaveType5']; $againstDate5=$_POST['againstDate5']; $forDate5=$_POST['forDate5']; $rhDate5=$_POST['rhDate5']; $reason5=$_POST['reason5'];
+        $halfFull5=$_POST['halfFull5'];
 
                 $comp_off=""; $pl_cl_ml="";
                 $q1="select pl_cl_ml,comp_off from leaves where user_id='$user_id'";
@@ -66,12 +71,17 @@ include 'empSession.php';
                     echo "4";
                     exit();
                 }
+
     		
-    				$q1="INSERT INTO leave_data (user_id,type_id,for_date,reason,status) VALUES ('$user_id','1','$forDate1','$reason1','1')";
+    				$q1="INSERT INTO leave_data (user_id,type_id,half_full,for_date,reason,status) VALUES ('$user_id','1','$halfFull1','$forDate1','$reason1','1')";
     				$re1=mysqli_query($conn,$q1) or die(mysqli_error($conn));
     			    			if ($re1===TRUE) {
     			    				
-    			    				$pl_cl_ml-=1;
+                                    if($halfFull1=="Full")
+    			    				    $pl_cl_ml-=1;
+                                    else if($halfFull1=="Half")
+                                        $pl_cl_ml-=0.5;
+
     			    			    $q2="update leaves set pl_cl_ml='$pl_cl_ml' where user_id='$user_id'";
     			    			    $re2 = mysqli_query($conn,$q2)or die(mysqli_error($conn));
     			    			    if ($re2 === TRUE) {
@@ -79,7 +89,7 @@ include 'empSession.php';
     			    			    }
     			    			}
 
-                    $message.="1. <b>Leave Type:</b> PL+CL+ML    <b>For Date:</b> ".$forDate1.",    <b>Reason:</b> ".$reason1.",<br>";
+                    $message.="1. <b>Leave Type:</b> PL+CL+ML    <b>Half/Full:</b> ".$halfFull1.",    <b>For Date:</b> ".$forDate1.",    <b>Reason:</b> ".$reason1.",<br>";
 
     		}else if($leaveType1=="2"){
 
@@ -89,7 +99,7 @@ include 'empSession.php';
                                 echo "4";
                                 exit();
                             }
-    			                $sql="update leave_data set status='1',for_date='$forDate1' where id='$againstDate1'";
+    			                $sql="update leave_data set status='1',for_date='$forDate1',half_full='Full' where id='$againstDate1'";
     			                $re = mysqli_query($conn,$sql)or die(mysqli_error($conn));
     			                if ($re === TRUE) {
     			                    $comp_off-=1;
@@ -121,7 +131,7 @@ include 'empSession.php';
 
                 if($rhDate1=="Birthday"){
 
-                    $q1="INSERT INTO leave_data (user_id,type_id,for_date,reason,status) VALUES ('$user_id','3','$forDate1','$rhDate1','1')";
+                    $q1="INSERT INTO leave_data (user_id,type_id,half_full,for_date,reason,status) VALUES ('$user_id','3','Full','$forDate1','$rhDate1','1')";
                                     $re1=mysqli_query($conn,$q1) or die(mysqli_error($conn));
                                                 if ($re1===TRUE) {
                                                     $flag=1;
@@ -141,7 +151,7 @@ include 'empSession.php';
                                             }
                                         }
                 
-                                    $q1="INSERT INTO leave_data (user_id,type_id,for_date,reason,status) VALUES ('$user_id','3','$DateRH','$occasion','1')";
+                                    $q1="INSERT INTO leave_data (user_id,type_id,half_full,for_date,reason,status) VALUES ('$user_id','3','Full','$DateRH','$occasion','1')";
                                     $re1=mysqli_query($conn,$q1) or die(mysqli_error($conn));
                                                 if ($re1===TRUE) {
                                                     $flag=1;
@@ -170,11 +180,15 @@ include 'empSession.php';
                     exit();
                 }
             
-                    $q1="INSERT INTO leave_data (user_id,type_id,for_date,reason,status) VALUES ('$user_id','1','$forDate2','$reason2','1')";
+                    $q1="INSERT INTO leave_data (user_id,type_id,half_full,for_date,reason,status) VALUES ('$user_id','1','$halfFull2','$forDate2','$reason2','1')";
                     $re1=mysqli_query($conn,$q1) or die(mysqli_error($conn));
                                 if ($re1===TRUE) {
                                     
-                                    $pl_cl_ml-=1;
+                                    if($halfFull2=="Full")
+                                        $pl_cl_ml-=1;
+                                    else if($halfFull2=="Half")
+                                        $pl_cl_ml-=0.5;
+
                                     $q2="update leaves set pl_cl_ml='$pl_cl_ml' where user_id='$user_id'";
                                     $re2 = mysqli_query($conn,$q2)or die(mysqli_error($conn));
                                     if ($re2 === TRUE) {
@@ -182,7 +196,7 @@ include 'empSession.php';
                                     }
                                 }
 
-            $message.="2. <b>Leave Type:</b> PL+CL+ML    <b>For Date:</b> ".$forDate2.",    <b>Reason:</b> ".$reason2.",<br>";
+            $message.="2. <b>Leave Type:</b>PL+CL+ML    <b>Half/Full:</b> ".$halfFull2.",    <b>For Date:</b> ".$forDate2.",    <b>Reason:</b> ".$reason2.",<br>";
 
             }else if($leaveType2=="2"){
 
@@ -193,7 +207,7 @@ include 'empSession.php';
                                 exit();
                             }
 
-                                $sql="update leave_data set status='1',for_date='$forDate2' where id='$againstDate2'";
+                                $sql="update leave_data set status='1',for_date='$forDate2',half_full='Full' where id='$againstDate2'";
                                 $re = mysqli_query($conn,$sql)or die(mysqli_error($conn));
                                 if ($re === TRUE) {
                                     $comp_off-=1;
@@ -226,7 +240,7 @@ include 'empSession.php';
 
                 if($rhDate2=="Birthday"){
 
-                    $q1="INSERT INTO leave_data (user_id,type_id,for_date,reason,status) VALUES ('$user_id','3','$forDate2','$rhDate2','1')";
+                    $q1="INSERT INTO leave_data (user_id,type_id,half_full,for_date,reason,status) VALUES ('$user_id','3','Full','$forDate2','$rhDate2','1')";
                                     $re1=mysqli_query($conn,$q1) or die(mysqli_error($conn));
                                                 if ($re1===TRUE) {
                                                     $flag=1;
@@ -248,7 +262,7 @@ include 'empSession.php';
                             }
 
 
-                        $q1="INSERT INTO leave_data (user_id,type_id,for_date,reason,status) VALUES ('$user_id','3','$DateRH','$occasion','1')";
+                        $q1="INSERT INTO leave_data (user_id,type_id,half_full,for_date,reason,status) VALUES ('$user_id','3','Full','$DateRH','$occasion','1')";
                         $re1=mysqli_query($conn,$q1) or die(mysqli_error($conn));
                                     if ($re1===TRUE) {
                                         $flag=1;
@@ -285,11 +299,15 @@ include 'empSession.php';
                     exit();
                 }
             
-                    $q1="INSERT INTO leave_data (user_id,type_id,for_date,reason,status) VALUES ('$user_id','1','$forDate3','$reason3','1')";
+                    $q1="INSERT INTO leave_data (user_id,type_id,half_full,for_date,reason,status) VALUES ('$user_id','1','$halfFull3','$forDate3','$reason3','1')";
                     $re1=mysqli_query($conn,$q1) or die(mysqli_error($conn));
                                 if ($re1===TRUE) {
                                     
-                                    $pl_cl_ml-=1;
+                                    if($halfFull3=="Full")
+                                        $pl_cl_ml-=1;
+                                    else if($halfFull3=="Half")
+                                        $pl_cl_ml-=0.5;
+
                                     $q2="update leaves set pl_cl_ml='$pl_cl_ml' where user_id='$user_id'";
                                     $re2 = mysqli_query($conn,$q2)or die(mysqli_error($conn));
                                     if ($re2 === TRUE) {
@@ -297,7 +315,7 @@ include 'empSession.php';
                                     }
                                 }
 
-            $message.="3. <b>Leave Type:</b> PL+CL+ML    <b>For Date:</b> ".$forDate3.",    <b>Reason:</b> ".$reason3.",<br>";
+            $message.="3. <b>Leave Type:</b> PL+CL+ML    <b>Half/Full:</b> ".$halfFull3."    <b>For Date:</b> ".$forDate3.",    <b>Reason:</b> ".$reason3.",<br>";
 
             }else if($leaveType3=="2"){
 
@@ -307,7 +325,7 @@ include 'empSession.php';
                                 echo "4";
                                 exit();
                             }
-                                $sql="update leave_data set status='1',for_date='$forDate3' where id='$againstDate3'";
+                                $sql="update leave_data set status='1',for_date='$forDate3',half_full='Full' where id='$againstDate3'";
                                 $re = mysqli_query($conn,$sql)or die(mysqli_error($conn));
                                 if ($re === TRUE) {
                                     $comp_off-=1;
@@ -340,7 +358,7 @@ include 'empSession.php';
 
                 if($rhDate3=="Birthday"){
 
-                    $q1="INSERT INTO leave_data (user_id,type_id,for_date,reason,status) VALUES ('$user_id','3','$forDate3','$rhDate3','1')";
+                    $q1="INSERT INTO leave_data (user_id,type_id,half_full,for_date,reason,status) VALUES ('$user_id','3','Full','$forDate3','$rhDate3','1')";
                                     $re1=mysqli_query($conn,$q1) or die(mysqli_error($conn));
                                                 if ($re1===TRUE) {
                                                     $flag=1;
@@ -361,7 +379,7 @@ include 'empSession.php';
                                         }
                 
                 
-                                    $q1="INSERT INTO leave_data (user_id,type_id,for_date,reason,status) VALUES ('$user_id','3','$DateRH','$occasion','1')";
+                                    $q1="INSERT INTO leave_data (user_id,type_id,half_full,for_date,reason,status) VALUES ('$user_id','3','Full','$DateRH','$occasion','1')";
                                     $re1=mysqli_query($conn,$q1) or die(mysqli_error($conn));
                                                 if ($re1===TRUE) {
                                                     $flag=1;
@@ -403,7 +421,11 @@ include 'empSession.php';
                     $re1=mysqli_query($conn,$q1) or die(mysqli_error($conn));
                                 if ($re1===TRUE) {
                                     
-                                    $pl_cl_ml-=1;
+                                    if($halfFull4=="Full")
+                                        $pl_cl_ml-=1;
+                                    else if($halfFull4=="Half")
+                                        $pl_cl_ml-=0.5;
+
                                     $q2="update leaves set pl_cl_ml='$pl_cl_ml' where user_id='$user_id'";
                                     $re2 = mysqli_query($conn,$q2)or die(mysqli_error($conn));
                                     if ($re2 === TRUE) {
@@ -411,7 +433,7 @@ include 'empSession.php';
                                     }
                                 }
 
-            $message.="4. <b>Leave Type:</b> PL+CL+ML    <b>For Date:</b> ".$forDate4.",    <b>Reason:</b> ".$reason4.",<br>";
+            $message.="4. <b>Leave Type:</b> PL+CL+ML    <b>Half/Full:</b> ".$halfFull4."    <b>For Date:</b> ".$forDate4.",    <b>Reason:</b> ".$reason4.",<br>";
 
             }else if($leaveType4=="2"){
 
@@ -422,7 +444,7 @@ include 'empSession.php';
                                 exit();
                             }
 
-                                $sql="update leave_data set status='1',for_date='$forDate4' where id='$againstDate4'";
+                                $sql="update leave_data set status='1',for_date='$forDate4',half_full='Full' where id='$againstDate4'";
                                 $re = mysqli_query($conn,$sql)or die(mysqli_error($conn));
                                 if ($re === TRUE) {
                                     $comp_off-=1;
@@ -456,7 +478,7 @@ include 'empSession.php';
 
                 if($rhDate4=="Birthday"){
 
-                    $q1="INSERT INTO leave_data (user_id,type_id,for_date,reason,status) VALUES ('$user_id','3','$forDate4','$rhDate4','1')";
+                    $q1="INSERT INTO leave_data (user_id,type_id,half_full,for_date,reason,status) VALUES ('$user_id','3','Full','$forDate4','$rhDate4','1')";
                                     $re1=mysqli_query($conn,$q1) or die(mysqli_error($conn));
                                                 if ($re1===TRUE) {
                                                     $flag=1;
@@ -477,7 +499,7 @@ include 'empSession.php';
                                         }
                 
                 
-                                    $q1="INSERT INTO leave_data (user_id,type_id,for_date,reason,status) VALUES ('$user_id','3','$DateRH','$occasion','1')";
+                                    $q1="INSERT INTO leave_data (user_id,type_id,half_full,for_date,reason,status) VALUES ('$user_id','3','Full','$DateRH','$occasion','1')";
                                     $re1=mysqli_query($conn,$q1) or die(mysqli_error($conn));
                                                 if ($re1===TRUE) {
                                                     $flag=1;
@@ -514,11 +536,15 @@ include 'empSession.php';
                     exit();
                 }
             
-                    $q1="INSERT INTO leave_data (user_id,type_id,for_date,reason,status) VALUES ('$user_id','1','$forDate5','$reason5','1')";
+                    $q1="INSERT INTO leave_data (user_id,type_id,half_full,for_date,reason,status) VALUES ('$user_id','1','$halfFull5','$forDate5','$reason5','1')";
                     $re1=mysqli_query($conn,$q1) or die(mysqli_error($conn));
                                 if ($re1===TRUE) {
                                     
-                                    $pl_cl_ml-=1;
+                                    if($halfFull5=="Full")
+                                        $pl_cl_ml-=1;
+                                    else if($halfFull5=="Half")
+                                        $pl_cl_ml-=0.5;
+
                                     $q2="update leaves set pl_cl_ml='$pl_cl_ml' where user_id='$user_id'";
                                     $re2 = mysqli_query($conn,$q2)or die(mysqli_error($conn));
                                     if ($re2 === TRUE) {
@@ -526,7 +552,7 @@ include 'empSession.php';
                                     }
                                 }
 
-            $message.="5. <b>Leave Type:</b> PL+CL+ML    <b>For Date:</b> ".$forDate5.",    <b>Reason:</b> ".$reason5.",<br>";
+            $message.="5. <b>Leave Type:</b> PL+CL+ML    <b>Half/Full:</b> ".$halfFull5."    <b>For Date:</b> ".$forDate5."    <b>Reason:</b> ".$reason5.",<br>";
 
             }else if($leaveType5=="2"){
 
@@ -538,7 +564,7 @@ include 'empSession.php';
                                 exit();
                             }
 
-                                $sql="update leave_data set status='1',for_date='$forDate5' where id='$againstDate5'";
+                                $sql="update leave_data set status='1',for_date='$forDate5',half_full='Full' where id='$againstDate5'";
                                 $re = mysqli_query($conn,$sql)or die(mysqli_error($conn));
                                 if ($re === TRUE) {
                                     $comp_off-=1;
@@ -571,7 +597,7 @@ include 'empSession.php';
 
                 if($rhDate5=="Birthday"){
 
-                    $q1="INSERT INTO leave_data (user_id,type_id,for_date,reason,status) VALUES ('$user_id','3','$forDate5','$rhDate5','1')";
+                    $q1="INSERT INTO leave_data (user_id,type_id,half_full,for_date,reason,status) VALUES ('$user_id','3','Full','$forDate5','$rhDate5','1')";
                                     $re1=mysqli_query($conn,$q1) or die(mysqli_error($conn));
                                                 if ($re1===TRUE) {
                                                     $flag=1;
@@ -592,7 +618,7 @@ include 'empSession.php';
                                         }
                 
                 
-                                    $q1="INSERT INTO leave_data (user_id,type_id,for_date,reason,status) VALUES ('$user_id','3','$DateRH','$occasion','1')";
+                                    $q1="INSERT INTO leave_data (user_id,type_id,half_full,for_date,reason,status) VALUES ('$user_id','3','Full','$DateRH','$occasion','1')";
                                     $re1=mysqli_query($conn,$q1) or die(mysqli_error($conn));
                                                 if ($re1===TRUE) {
                                                     $flag=1;

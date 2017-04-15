@@ -28,7 +28,7 @@ if($_POST['ACTION']=="getdata"){
                   if($row['type_id']=="1"){
                     $type="CL+PL+ML";
                     $againstDate="NA";
-                    $reason="NA";
+                    $reason=$row['reason'];
                   }else if($row['type_id']=="2"){
                     $type="Comp Off";
                     $againstDate=$row['against_date'];
@@ -38,18 +38,20 @@ if($_POST['ACTION']=="getdata"){
                   }else if($row['type_id']=="3"){
                     $type="RH";
                     $againstDate="NA";
-                    $reason="NA";
+                    $reason=$row['reason'];
                   }
 
+                    if(empty($row['half_full']))
+                      $row['half_full']="NA";
                     
 
-                    $tableRows [$index] = array($index+1, $type, $formattedForDate1, $formattedAgainstDate2, $reason);
+                    $tableRows [$index] = array($index+1, $type,$row['half_full'], $formattedForDate1, $formattedAgainstDate2, $reason);
                     $index++;    
                 }
                 
                 $dataArray =array( 
                         
-                            "header" => array("S.No.","Leave Type","Leave Date","Against Date","Reason"),
+                            "header" => array("S.No.","Leave Type","Half/Full","Leave Date","Against Date","Reason"),
                             "rows" => $tableRows
                     );
                 

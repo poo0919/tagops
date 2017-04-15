@@ -16,8 +16,6 @@ session_start();
 
 <script type="text/javascript">
 $(document).ready(function(){
-
-    
     
     $("#cancel-user-button").click(function(e){
                 e.preventDefault();
@@ -75,7 +73,7 @@ $(document).ready(function(){
                                             localStorage.setItem('token', token);
                                             localStorage.setItem('name',name);
                                             localStorage.setItem('user_id',user_id);
-                                            localStorage.setItem('filter2-employees','all');
+                                            localStorage.setItem('filter2-employees','0');
                                             localStorage.setItem('filter-assets','0');
 
                                             window.location.href="empExpenses.php";

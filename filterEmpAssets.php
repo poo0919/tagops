@@ -15,6 +15,7 @@ $echoData="";
                                       <th>S.No.</th> 
                                       <th>Type</th>
                                       <th>Description</th>
+                                      <th>Price</th>
                                       <th>Status</th>
                                       <th>Action</th>
                                     </tr>
@@ -47,6 +48,7 @@ $echoData="";
                                         $echoData.= "<tr><td>".$index.".</td>
                                               <td >".$r1['asset_name']."</td>
                                               <td >".$row['description']."</td>
+                                              <td >".$row['price']."</td>
                                               <td >".$status."</td>";
 
                                               if($status=="Given"){
@@ -88,6 +90,7 @@ $echoData="";
                                         <th>S.No.</th> 
                                         <th>Type</th>
                                         <th>Description</th>
+                                        <th>Price</th>
                                         <th>Status</th>
                                         <th>Action</th>
                                       </tr>
@@ -122,6 +125,7 @@ $echoData="";
                                        $echoData.= "<tr><td>".$index.".</td>
                                               <td >".$r1['asset_name']."</td>
                                               <td >".$row['description']."</td>
+                                              <td >".$row['price']."</td>
                                               <td >".$status."</td>";
 
                                               if($status=="Given"){

@@ -171,7 +171,7 @@ include 'empSession.php';
                                     <div id=<?php echo "leaveRecords".$index;?> class="tab-pane fade in active"><br><br>
 
                                     <?php
-                                           $query="Select * from leave_data where user_id='$rp_id' AND (status='2' OR status='4')";
+                                           $query="Select * from leave_data where user_id='$rp_id' AND (status='1' || status='2' || status='4' || status='6') order by for_date DESC";
                                            $result=mysqli_query($conn,$query)or die(mysqli_error($conn));
                                            if ($result->num_rows > 0) {
                                                
@@ -184,9 +184,11 @@ include 'empSession.php';
                                                     <tr>
                                                         <th>S.No.</th>
                                                         <th>Leave Type</th>
+                                                        <th>Half/Full</th>
                                                         <th>Leave Date</th>
                                                         <th>Against Date</th>
                                                         <th>Reason</th>
+                                                        <th>Status</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -197,6 +199,7 @@ include 'empSession.php';
                                                   $type="";
                                                   $againstDate="";
                                                   $reason="";
+                                                  $status="";
 
                                                   $dateCreated1=date_create($row['for_date']);
                                                   $formattedForDate1=date_format($dateCreated1, 'd-m-Y');
@@ -205,34 +208,52 @@ include 'empSession.php';
                                                   if($row['type_id']=="1"){
                                                     $type="CL+PL+ML";
                                                     $formattedAgainstDate2="NA";
-                                                    $reason="NA";
+                                                 //   $reason="NA";
                                                   }else if($row['type_id']=="2"){
                                                     $type="Comp Off";
                                                     $againstDate=$row['against_date'];
                                                     $dateCreated2=date_create($againstDate);
                                                     $formattedAgainstDate2=date_format($dateCreated2, 'd-m-Y');
-                                                    $reason=$row['reason'];
+                                                //    $reason=$row['reason'];
                                                   }else if($row['type_id']=="3"){
                                                     $type="RH";
                                                     $formattedAgainstDate2="NA";
-                                                    $reason="NA";
+                                                 //   $reason="NA";
                                                   }
+
+                                                  $statusColor="";
+                                                  $reason=$row['reason'];
+                                                  $statusNum=$row['status'];
+                                                  if($statusNum=='1'){
+                                                      $status="Applied";
+                                                      $statusColor="#71D3f4";
+                                                  }else if ($statusNum=='2') {
+                                                      $status="Approved";
+                                                      $statusColor="#7cc576";
+                                                  }else if ($statusNum=='4') {
+                                                      $status="Used";
+                                                      $statusColor="#ec585d";
+                                                  }else if ($statusNum=='6') {
+                                                      $status="Rejected";
+                                                      $statusColor="#fea862";
+                                                  }
+
+                                                  if(empty($row['half_full']))
+                                                    $row['half_full']="NA";
 
                                                   echo "<tr>
                                                         <td>".$inc.".</td>
                                                         <td>".$type."</td>
+                                                        <td>".$row['half_full']."</td>
                                                         <td>".$formattedForDate1."</td>
                                                         <td>".$formattedAgainstDate2."</td>
                                                         <td>".$reason."</td>
+                                                        <td style='color:".$statusColor."'>".$status."</td>
                                                   </tr>";
 
-                                                
-                                                    
-
-                                                   
-                                                    $inc++;    
+                                                  $inc++;    
                                                 }
-                                                ?></tbody></table> <?php
+                                              ?></tbody></table> <?php
                                                                                                 
                                            }
                                     ?>
@@ -247,7 +268,7 @@ include 'empSession.php';
                                                             
 
                                         <?php
-                                            $q3="select * from leave_data where user_id='$rp_id' AND type_id='2' order by against_date";
+                                            $q3="select * from leave_data where user_id='$rp_id' AND type_id='2' order by against_date DESC";
                                             $re3=mysqli_query($conn,$q3)or die(mysqli_error($conn));
                                             if ($re3->num_rows > 0) {
                                                 $in=1;
@@ -325,22 +346,22 @@ include 'empSession.php';
                                               <h4 class="modal-title" id="exampleModalLabel1">New </h4>
                                           </div>
                                           <div class="modal-body">
-                                              <form method="POST" action="addNewCompOff.php" id="compOffForm">
+                                              <form   id="compOffForm">
                                                   <div class="form-group">
                                                       <label for="againstDate" class="control-label">Against Date:</label>
-                                                      <input type="text" class="form-control" id="againstDate" name="againstDate" >
+                                                      <input type="text" class="form-control" id="againstDate" >
                                                   </div>
                                                   <div class="form-group">
                                                       <label for="reason" class="control-label">Reason:</label>
-                                                      <input type="text" class="form-control" id="reason" name="reason" >
+                                                      <input type="text" class="form-control" id="reason" >
                                                   </div>
                                                   <div class="form-group">
-                                                      <input type="hidden" name="rpId" id="rpId">
+                                                      <input type="hidden" id="rpId">
                                                   </div>
                                                   <div class="form-group">
-                                                      <input type="hidden" name="userId" id="userId">
+                                                      <input type="hidden" id="userId">
                                                   </div>
-                                                  <button type="button-inline" id="addNewCompOff" class="btn btn-primary" style="width: 70px;height: 34px;" name="addNewCompOff">Add</button>
+                                                  <button type="button" id="addNewCompOff" class="btn btn-primary" style="width: 70px;height: 34px;" >Add</button>
                                               </form>
                                           </div>
                                           <div class="modal-footer">
@@ -370,26 +391,12 @@ include 'empSession.php';
             <div id="leaveRequestsTab" class="tab-pane fade ">
             
             <table class="table table-condensed table-bordered table-hover" >
-                                
-
-                                <?php
-                              $user_id=$_SESSION['userid'];
-
-                                    $q2="SELECT * FROM user where rm_id='$user_id' ORDER BY name";             
-                                    $re2=mysqli_query($conn,$q2)or die(mysqli_error($conn));
-                                    if ($re2->num_rows > 0) {
-                                        while($ro2 = $re2->fetch_array()){
-                                              $reportee_id=$ro2['id'];
-                                            $q3="select * from leave_data where user_id='$reportee_id'AND status='1'";
-                                            $re3=mysqli_query($conn,$q3)or die(mysqli_error($conn));
-                                            if ($re3->num_rows > 0) {
-                                                $index=1;
-                                                ?>
-                                                <thead>
+                                 <thead>
                                                 <tr>
                                                     <th>S.no</th>
                                                     <th>Name</th>
                                                     <th>Type</th>
+                                                    <th>Half/Full</th>
                                                     <th>For Date</th>
                                                     <th>Against Date</th>
                                                     <th>Reason</th>
@@ -397,6 +404,20 @@ include 'empSession.php';
                                                     <th>Action</th>
                                                   </tr>
                                                 </thead>
+                <?php
+                              $user_id=$_SESSION['userid'];
+
+                                    $q2="SELECT * FROM user where rm_id='$user_id' ORDER BY name";             
+                                    $re2=mysqli_query($conn,$q2)or die(mysqli_error($conn));
+                                    if ($re2->num_rows > 0) {$index=1;
+                                        while($ro2 = $re2->fetch_array()){
+                                            $reportee_id=$ro2['id'];
+                                            $q3="select * from leave_data where user_id='$reportee_id'AND status='1'";
+                                            $re3=mysqli_query($conn,$q3)or die(mysqli_error($conn));
+                                            if ($re3->num_rows > 0) {
+                                                
+                                                ?>
+                                               
 
                                                 <tbody >
                                                 <?php
@@ -429,11 +450,14 @@ include 'empSession.php';
                                                         $status="Expired";
                                                     }
                                                     
+                                                    if(empty($ro3['half_full']))
+                                                    $ro3['half_full']="NA";
 
                                                     echo "<tr>
                                                             <td>".$index.".</td>
                                                             <td>".$ro2['name']."</td>
                                                             <td>".$type."</td>
+                                                            <td>".$ro3['half_full']."</td>
                                                             <td>".$formattedForDate1."</td>
                                                             <td>".$formattedAgainstDate2."</td>
                                                             <td>".$ro3['reason']."</td>
@@ -608,14 +632,34 @@ include 'empSession.php';
                                     type: "POST",
                                     data: "ACTION=reject&applyLeaveId="+applyLeaveId+"&leaveTypeId="+leaveTypeId+"&userId="+userId,
                                     success: function(data){
-                                        
-                                        if(data=='1'){
-                                          alert("Leave Rejected!");
-                                            window.location.href = window.location.href;
-                                          //  window.loaction.href='adminPanelUpdateEmp.php';
-                                          //  window.loaction.reload();
-                                        }else if(data=='0'){
+                               
+                                        if(data=='0'){
                                           alert("Can't update!");
+                                        }else {
+                                          alert("Leave Rejected!");
+                                           var response=JSON.parse(data);
+                                            var userEmail=response.userMail;
+                                            var forDate=response.forDate;
+                                            var subject="Leave Request - Rejected";
+                                            var leaveMessage="<pre>Hi,<br><br>Your Leave Request For Date: "+forDate+" has been rejected. <br>Thanks.</pre>";
+                                            var cc="##";
+
+                                            $.ajax({
+                                                                                               
+                                                url: "http://dev.tagbin.in/phpHandler/mailer/mailgun/tagbinMailer.php",
+                                                type: "POST",
+                                                data: "_ACTION=send_email&_SUBJECT="+subject+"&_EMAIL="+userEmail+"&_MESSAGE="+leaveMessage+"&_CC="+cc,
+                                                success: function(data){
+                                                    alert("Mail has been sent!");
+                                                  //  $('#leavesForm')[0].reset();
+                                                }
+                                            })
+
+                                          //    alert("Leave approved!");
+                                            //  $('#leavesForm')[0].reset();
+                                           //     window.location.href=window.location.href;
+                                          window.location.href = window.location.href;
+                                        
                                         }
                                     }
                                 })
@@ -663,15 +707,35 @@ include 'empSession.php';
                                     type: "POST",
                                     data: "ACTION=approve&applyLeaveId="+applyLeaveId+"&leaveTypeId="+leaveTypeId+"&userId="+userId,
                                     success: function(data){
-                                        
-                                        if(data=='1'){
-                                          alert("Leave Approved!");
-                                            window.location.href = window.location.href;
-                                        
-                                        }else if(data=='0'){
+                                        if(data=='0'){
                                           alert("Can't update!");
                                         }else if(data=='2'){
                                           alert("All RH used!");
+                                        }else {
+                                          alert("Leave Approved!");
+                                           var response=JSON.parse(data);
+                                            var userEmail=response.userMail;
+                                            var forDate=response.forDate;
+                                            var subject="Leave Request - Approved";
+                                            var leaveMessage="<pre>Hi,<br><br>Your Leave Request For Date: "+forDate+" has been approved. <br>Thanks.</pre>";
+                                            var cc="##";
+
+                                            $.ajax({
+                                                                                               
+                                                url: "http://dev.tagbin.in/phpHandler/mailer/mailgun/tagbinMailer.php",
+                                                type: "POST",
+                                                data: "_ACTION=send_email&_SUBJECT="+subject+"&_EMAIL="+userEmail+"&_MESSAGE="+leaveMessage+"&_CC="+cc,
+                                                success: function(data){
+                                                    alert("Mail has been sent!");
+                                                  //  $('#leavesForm')[0].reset();
+                                                }
+                                            })
+
+                                          //    alert("Leave approved!");
+                                            //  $('#leavesForm')[0].reset();
+                                           //     window.location.href=window.location.href;
+                                          window.location.href = window.location.href;
+                                        
                                         }
                                     }
                                 })

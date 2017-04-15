@@ -75,29 +75,54 @@ include 'adminBars.php';
           <ul class="nav navbar-nav navbar-right">
             <!-- filter1 on basis of company/rent -->
             <li style="padding-top: 5px;padding-right: 10px;"> 
-            <form class="form-inline" method="GET" action="<?php echo $_SERVER['PHP_SELF']; ?>" id="form-filter1-assets" >
+            <form class="form-inline" id="form-filter1-assets" >
                 <div class="form-group" >
-                    <select name="filter1-assets" class="form-control" id="filter1-assets" >
+                <label style="color: #2a409f">Owner Filter </label>
+                    <select class="form-control" id="filter1-assets" >
                         <option value="all" selected="">All</option>
                         <option value="company" >Company</option>
                         <option value="rent">Rent</option>
                     </select>
-                    <button type="submit" class="btn btn-primary" ><b>Filter 1</b></button>              
+                <!--    <button type="submit" class="btn btn-primary" ><b>Filter 1</b></button>       -->       
                 </div>
               </form></li><br>
 
               <!-- filter2 on basis of status free/given/assigned/returned  -->
               <li style="padding-top: 5px;padding-bottom: 10px;">
-                <form class="form-inline" method="GET" action="<?php echo $_SERVER['PHP_SELF']; ?>" id="form-filter2-assets" >
+                <form class="form-inline" id="form-filter2-assets" >
                     <div class="form-group" >
-                        <select name="filter2-assets" class="form-control" id="filter2-assets" >
+                    <label style="color: #2a409f">Status Filter </label>
+                        <select class="form-control" id="filter2-assets" >
                             <option value="all" selected="">All</option>
                             <option value="1">Free</option>
                             <option value="2">Given</option>
                             <option value="3">Assigned</option>
                             <option value="4">Returned</option>
                         </select>
-                        <button type="submit" class="btn btn-primary" ><b>Filter 2</b></button>              
+                    <!--    <button type="submit" class="btn btn-primary" ><b>Filter 2</b></button>          -->    
+                    </div>
+                </form>
+            </li><br> 
+
+            <!-- filter3 on basis of status category  -->
+              <li style="padding-top: 5px;padding-bottom: 10px;">
+                <form class="form-inline" id="form-filter3-assets" >
+                    <div class="form-group" >
+                    <label style="color: #2a409f">Category Filter </label>
+                        <select class="form-control" id="filter3-assets" >
+                            <option value="all" selected="">All</option>
+                            <?php
+                            $query="Select * from asset_type order by asset_name";
+                            $result1=mysqli_query($conn,$query)or die(mysqli_error($conn));
+                            
+                            if ($result1->num_rows > 0) {
+                                while($row1 = $result1->fetch_array()){
+                                      echo "<option value='".$row1['id']."'>".$row1['asset_name']."</option>";                                     
+                                }
+                            }
+                            ?>
+                        </select>
+                    <!--    <button type="submit" class="btn btn-primary" ><b>Filter 3</b></button>         -->      
                     </div>
                 </form>
             </li><br>  
@@ -105,646 +130,106 @@ include 'adminBars.php';
 
 
                 <div style="text-align: center">  <h1>Assets</h1></div>
-                    <?php
-
-                    if((!isset($_GET['filter1-assets']) && !isset($_GET['filter2-assets']))){ //if no filter is set
-
-                        echo "<table class='table table-striped table-bordered table-hover table-condensed' id='tableItems' >
-                        <thead>
-                        <tr>
-                          <th>S.no</th>
-                          <th>Type</th>
-                          <th>Description</th>
-                          <th>Owner</th>
-                          <th>Rental Company</th>
-                          <th>Status</th>
-                          <th>Assigned To</th>
-                          <th>Action</th>
-                          <th>Update</th>
-                        </tr>
-                        </thead>
-                        <tbody>";
-
-                                $query = "Select * from inventory";
-                                $result=mysqli_query($conn,$query)or die(mysqli_error($conn));
-                                if ($result->num_rows > 0) {
-                                    $index=1;
-                                    while ($row = $result->fetch_array()){
-                                                
-                                        $type_id=$row['type'];
-                                        $q1="select asset_name from asset_type where id='$type_id'";
-                                        $rs1=mysqli_query($conn,$q1)or die(mysqli_error($conn));
-                                        $r1=$rs1->fetch_array();
-
-                                        if($row['owner']=="Rent")
-                                        {
-                                            $rent_id=$row['rental_company'];
-                                            $q2="select rental_company_name from rental_companies where id='$rent_id'";
-                                            $rs2=mysqli_query($conn,$q2)or die(mysqli_error($conn));
-                                            $r2=$rs2->fetch_array();
-                                            $rentCompany=$r2['rental_company_name'];                                    
-                                        }else{
-                                            $rentCompany="NA";
-                                        }
-
-                                        $user_id=$row['assigned_to'];
-                                        $q3="select name from user where id=$user_id";
-                                        $rs3=mysqli_query($conn,$q3)or die(mysqli_error($conn));
-                                        $r3=$rs3->fetch_array();
-                                        $name=$r3['name'];
-                                                
-                                        $status=$row['status'];
-                                        if($status=="1"){
-                                            $status="Free";
-                                            $name="No one.";
-                                        }else if($status=="2"){
-                                            $status="Given";
-                                        }else if($status=="3"){
-                                            $status="Assigned";
-                                        }else if($status=="4"){
-                                            $status="Returned";
-                                        }
-
-                                        echo "<tr><td>".$index."</td>
-                                              <td align='left'>".$r1['asset_name']."</td>
-                                              <td align='left'>".$row['description']."</td>
-                                              <td align='left'>".$row['owner']."</td>
-                                              <td align='left'>".$rentCompany."</td>
-                                              <td align='left'>".$status."</td>
-                                              <td align='left'>".$name."</td><td>";
-
-                                              if($status=="Given" || $status=="Assigned"){
-                                                  echo  "No Action";
-                                              }else if($status=="Free"){
-                                                  echo   "<button id='editbtn".$index."' type='button' class='btn btn-info btn-xs' data-toggle='modal' data-target='#exampleModal1' onclick=modalFunction1()  data-id='".$row['id']."' ><span class='glyphicon glyphicon-edit'></span> Assign</button>";
-                                              }else if($status=="Returned"){
-                                                  echo  "<button id='changebtn".$index."' onclick='acceptAdminAsset(".$row['id'].")' class='btn btn-success btn-xs' >Accept</button>";
-                                              }
-
-                                        echo  "</td><td><button id='editbtn".$index."' type='button' class='btn btn-info btn-xs' data-toggle='modal' data-target='#exampleModal3' onclick=modalFunction3() data-type='".$r1['asset_name']."' data-description='".$row['description']."' data-owner='".$row['owner']."' data-rent_company='".$rentCompany."' data-name='".$name."' data-status='".$status."' data-id='".$row['id']."' ><span class='glyphicon glyphicon-pencil'></span> Edit</button><button onclick=deleteAssetRow(".$row['id'].") class='btn btn-warning btn-xs' id='delete".$index."'><span class='glyphicon glyphicon-remove-sign'></span> Delete</button> 
-                                    </td><tr>";
-                                        $index++;
-                                    }
-
-                                } else{
-                                    echo "<h4> No entry in this table ! <h4>";
-                                }
-
-                      } else if(isset($_GET['filter1-assets'])){  //if filter1 is set
-
-                            if(($_GET['filter1-assets']=="all")){
-
-                              echo "<table class='table table-striped table-bordered table-hover table-condensed' id='tableItems' >
-                              <thead>
-                              <tr>
-                                <th>S.no</th>
-                                <th>Type</th>
-                                <th>Description</th>
-                                <th>Owner</th>
-                                <th>Rental Company</th>
-                                <th>Status</th>
-                                <th>Assigned To</th>
-                                <th>Action</th>
-                                <th>Update</th>
-                              </tr>
-                              </thead>
-                              <tbody>";
-
-
-                                $query = "Select * from inventory";
-                                $result=mysqli_query($conn,$query)or die(mysqli_error($conn));
-                                if ($result->num_rows > 0) {
-                                    $index=1;
-                                    while ($row = $result->fetch_array()){
-                                                
-                                        $type_id=$row['type'];
-                                        $q1="select asset_name from asset_type where id='$type_id'";
-                                        $rs1=mysqli_query($conn,$q1)or die(mysqli_error($conn));
-                                        $r1=$rs1->fetch_array();
-
-                                        if($row['owner']=="Rent")
-                                        {
-                                            $rent_id=$row['rental_company'];
-                                            $q2="select rental_company_name from rental_companies where id='$rent_id'";
-                                            $rs2=mysqli_query($conn,$q2)or die(mysqli_error($conn));
-                                            $r2=$rs2->fetch_array();
-                                            $rentCompany=$r2['rental_company_name'];                                    
-                                        }else{
-                                            $rentCompany="NA";
-                                        }
-
-                                        $user_id=$row['assigned_to'];
-                                        $q3="select name from user where id=$user_id";
-                                        $rs3=mysqli_query($conn,$q3)or die(mysqli_error($conn));
-                                        $r3=$rs3->fetch_array();
-                                        $name=$r3['name'];
-                                                
-                                        $status=$row['status'];
-                                        if($status=="1"){
-                                            $status="Free";
-                                            $name="No one.";
-                                        }else if($status=="2"){
-                                            $status="Given";
-                                        }else if($status=="3"){
-                                            $status="Assigned";
-                                        }else if($status=="4"){
-                                            $status="Returned";
-                                        }
-
-                                        echo "<tr><td>".$index."</td>
-                                              <td align='left'>".$r1['asset_name']."</td>
-                                              <td align='left'>".$row['description']."</td>
-                                              <td align='left'>".$row['owner']."</td>
-                                              <td align='left'>".$rentCompany."</td>
-                                              <td align='left'>".$status."</td>
-                                              <td align='left'>".$name."</td><td>";
-
-                                              if($status=="Given" || $status=="Assigned"){
-                                                  echo  "No Action";
-                                              }else if($status=="Free"){
-                                                  echo   "<button id='editbtn".$index."' type='button' class='btn btn-info btn-xs' data-toggle='modal' data-target='#exampleModal1' onclick=modalFunction1()  data-id='".$row['id']."' ><span class='glyphicon glyphicon-edit'></span> Assign</button>";
-                                              }else if($status=="Returned"){
-                                                  echo  "<button id='changebtn".$index."' onclick='acceptAdminAsset(".$row['id'].")' class='btn btn-success btn-xs' >Accept</button>";
-                                              }
-
-                                        echo  "</td><td><button id='editbtn".$index."' type='button' class='btn btn-info btn-xs' data-toggle='modal' data-target='#exampleModal3' onclick=modalFunction3() data-type='".$r1['asset_name']."' data-description='".$row['description']."' data-owner='".$row['owner']."' data-rent_company='".$rentCompany."' data-name='".$name."' data-status='".$status."' data-id='".$row['id']."' ><span class='glyphicon glyphicon-pencil'></span> Edit</button><button onclick=deleteAssetRow(".$row['id'].") class='btn btn-warning btn-xs' id='delete".$index."'><span class='glyphicon glyphicon-remove-sign'></span> Delete</button></td><tr>";
-
-                                        $index++;
-                                    }
-
-                                } else{
-                                    echo "<h4> No entry in this table ! <h4>";
-                                }
-
-                        } else if(($_GET['filter1-assets']=="company")){
-
-                          echo "<table class='table table-striped table-bordered table-hover table-condensed' id='tableItems' >
-                          <thead>
-                          <tr>
-                            <th>S.no</th>
-                            <th>Type</th>
-                            <th>Description</th>
-                            <th>Owner</th>
-                            <th>Rental Company</th>
-                            <th>Status</th>
-                            <th>Assigned To</th>
-                            <th>Action</th>
-                            <th>Update</th>
-                          </tr>
-                          </thead>
-                          <tbody>";
-                            $filter=$_GET['filter1-assets'];
-                            if($filter=="rent")
-                                $query = "Select * from inventory where owner='$filter'";
-                            else
-                                $query = "Select * from inventory where owner NOT LIKE 'Rent'";
-                                $result=mysqli_query($conn,$query)or die(mysqli_error($conn));
-                                if ($result->num_rows > 0) {
-                                    $index=1;
-                                    while ($row = $result->fetch_array()){
-                                                
-                                        $type_id=$row['type'];
-                                        $q1="select asset_name from asset_type where id='$type_id'";
-                                        $rs1=mysqli_query($conn,$q1)or die(mysqli_error($conn));
-                                        $r1=$rs1->fetch_array();
-
-                                        if($row['owner']=="Rent")
-                                        {
-                                            $rent_id=$row['rental_company'];
-                                            $q2="select rental_company_name from rental_companies where id='$rent_id'";
-                                            $rs2=mysqli_query($conn,$q2)or die(mysqli_error($conn));
-                                            $r2=$rs2->fetch_array();
-                                            $rentCompany=$r2['rental_company_name'];                                    
-                                        }else{
-                                            $rentCompany="NA";
-                                        }
-
-                                        $user_id=$row['assigned_to'];
-                                        $q3="select name from user where id=$user_id";
-                                        $rs3=mysqli_query($conn,$q3)or die(mysqli_error($conn));
-                                        $r3=$rs3->fetch_array();
-                                        $name=$r3['name'];
-
-                                                
-                                        $status=$row['status'];
-                                        if($status=="1"){
-                                            $status="Free";
-                                            $name="No one.";
-                                        }else if($status=="2"){
-                                            $status="Given";
-                                        }else if($status=="3"){
-                                            $status="Assigned";
-                                        }else if($status=="4"){
-                                            $status="Returned";
-                                        }
-
-                                        echo "<tr><td>".$index."</td>
-                                              <td align='left'>".$r1['asset_name']."</td>
-                                              <td align='left'>".$row['description']."</td>
-                                              <td align='left'>".$row['owner']."</td>
-                                              <td align='left'>".$rentCompany."</td>
-                                              <td align='left'>".$status."</td>
-                                              <td align='left'>".$name."</td><td>";
-
-                                              if($status=="Given" || $status=="Assigned"){
-                                                  echo  "No Action";
-                                              }else if($status=="Free"){
-                                                  echo  "<button id='editbtn".$index."' type='button' class='btn btn-info btn-xs' data-toggle='modal' data-target='#exampleModal1' onclick=modalFunction1()  data-id='".$row['id']."' ><span class='glyphicon glyphicon-edit'></span> Assign</button>";
-                                              }else if($status=="Returned"){
-                                                  echo  "<button id='changebtn".$index."' onclick='acceptAdminAsset(".$row['id'].")' class='btn btn-success btn-xs' >Accept</button>";
-                                              }
-
-                                        echo  "</td><td><button id='editbtn".$index."' type='button' class='btn btn-info btn-xs' data-toggle='modal' data-target='#exampleModal3' onclick=modalFunction3() data-type='".$r1['asset_name']."' data-description='".$row['description']."' data-owner='".$row['owner']."' data-rent_company='".$rentCompany."' data-name='".$name."' data-status='".$status."' data-id='".$row['id']."' ><span class='glyphicon glyphicon-pencil'></span> Edit</button><button onclick=deleteAssetRow(".$row['id'].") class='btn btn-warning btn-xs' id='delete".$index."'><span class='glyphicon glyphicon-remove-sign'></span> Delete</button></td><tr>";
-                                        $index++;
-                                    }
-
-                                } else{
-                                    echo "<h4> No entry in this table ! <h4>";
-                                }
-
-                        }else{
-
-                            echo "<table class='table table-striped table-bordered table-hover table-condensed' id='tableItems' >
-                            <thead>
-                            <tr>
-                              <th>S.no</th>
-                              <th>Type</th>
-                              <th>Description</th>
-                              <th>Owner</th>
-                              <th>Rental Company</th>
-                              <th>Status</th>
-                              <th>Assigned To</th>
-                              <th>Action</th>
-                              <th>Update</th>
-                            </tr>
-                            </thead>
-                            <tbody>";
-
-                            $filter=$_GET['filter1-assets'];
-                            if($filter=="rent")
-                                $query = "Select * from inventory where owner='$filter'";
-                            else
-                                $query = "Select * from inventory where owner NOT LIKE 'Rent'";
-
-                                $result=mysqli_query($conn,$query)or die(mysqli_error($conn));
-                                if ($result->num_rows > 0) {
-                                    $index=1;
-                                    while ($row = $result->fetch_array()){
-                                                
-                                        $type_id=$row['type'];
-                                        $q1="select asset_name from asset_type where id='$type_id'";
-                                        $rs1=mysqli_query($conn,$q1)or die(mysqli_error($conn));
-                                        $r1=$rs1->fetch_array();
-
-                                        if($row['owner']=="Rent")
-                                        {
-                                            $rent_id=$row['rental_company'];
-                                            $q2="select rental_company_name from rental_companies where id='$rent_id'";
-                                            $rs2=mysqli_query($conn,$q2)or die(mysqli_error($conn));
-                                            $r2=$rs2->fetch_array();
-                                            $rentCompany=$r2['rental_company_name'];                                    
-                                        }else{
-                                            $rentCompany="NA";
-                                        }
-
-                                        $user_id=$row['assigned_to'];
-                                        $q3="select name from user where id=$user_id";
-                                        $rs3=mysqli_query($conn,$q3)or die(mysqli_error($conn));
-                                        $r3=$rs3->fetch_array();
-                                        $name=$r3['name'];
-
-                                                
-                                        $status=$row['status'];
-                                        if($status=="1"){
-                                            $status="Free";
-                                            $name="No one.";
-                                        }else if($status=="2"){
-                                            $status="Given";
-                                        }else if($status=="3"){
-                                            $status="Assigned";
-                                        }else if($status=="4"){
-                                            $status="Returned";
-                                        }
-
-                                        echo "<tr><td>".$index."</td>
-                                              <td align='left'>".$r1['asset_name']."</td>
-                                              <td align='left'>".$row['description']."</td>
-                                              <td align='left'>".$row['owner']."</td>
-                                              <td align='left'>".$rentCompany."</td>
-                                              <td align='left'>".$status."</td>
-                                              <td align='left'>".$name."</td><td>";
-
-                                              if($status=="Given" || $status=="Assigned"){
-                                                  echo  "No Action";
-                                              }else if($status=="Free"){
-                                                  echo  "<button id='editbtn".$index."' type='button' class='btn btn-info btn-xs' data-toggle='modal' data-target='#exampleModal1' onclick=modalFunction1()  data-id='".$row['id']."' ><span class='glyphicon glyphicon-edit'></span> Assign</button>";
-                                              }else if($status=="Returned"){
-                                                  echo  "<button id='changebtn".$index."' onclick='acceptAdminAsset(".$row['id'].")' class='btn btn-success btn-xs' >Accept</button>";
-                                              }
-
-                                        echo  "</td><td><button id='editbtn".$index."' type='button' class='btn btn-info btn-xs' data-toggle='modal' data-target='#exampleModal3' onclick=modalFunction3() data-type='".$r1['asset_name']."' data-description='".$row['description']."' data-owner='".$row['owner']."' data-rent_company='".$rentCompany."' data-name='".$name."' data-status='".$status."' data-id='".$row['id']."' ><span class='glyphicon glyphicon-pencil'></span> Edit</button><button onclick=deleteAssetRow(".$row['id'].") class='btn btn-warning btn-xs' id='delete".$index."'><span class='glyphicon glyphicon-remove-sign'></span> Delete</button></td><tr>";
-                                        $index++;
-                                    }
-
-                                } else{
-                                    echo "<h4> No entry in this table ! <h4>";
-                                }
-                        }
-                      
-                    }else if(isset($_GET['filter2-assets'])){ //if filter2 is set
-
-                      if(($_GET['filter2-assets']=="all")){
-
-                        echo "<table class='table table-striped table-bordered table-hover table-condensed' id='tableItems' >
-                        <thead>
-                        <tr>
-                          <th>S.no</th>
-                          <th>Type</th>
-                          <th>Description</th>
-                          <th>Owner</th>
-                          <th>Rental Company</th>
-                          <th>Status</th>
-                          <th>Assigned To</th>
-                          <th>Action</th>
-                          <th>Update</th>
-                        </tr>
-                        </thead>
-                        <tbody>";
-
-
-                                $query = "Select * from inventory";
-                                $result=mysqli_query($conn,$query)or die(mysqli_error($conn));
-                                if ($result->num_rows > 0) {
-                                    $index=1;
-                                    while ($row = $result->fetch_array()){
-                                                
-                                        $type_id=$row['type'];
-                                        $q1="select asset_name from asset_type where id='$type_id'";
-                                        $rs1=mysqli_query($conn,$q1)or die(mysqli_error($conn));
-                                        $r1=$rs1->fetch_array();
-
-                                        if($row['owner']=="Rent")
-                                        {
-                                            $rent_id=$row['rental_company'];
-                                            $q2="select rental_company_name from rental_companies where id='$rent_id'";
-                                            $rs2=mysqli_query($conn,$q2)or die(mysqli_error($conn));
-                                            $r2=$rs2->fetch_array();
-                                            $rentCompany=$r2['rental_company_name'];                                    
-                                        }else{
-                                            $rentCompany="NA";
-                                        }
-
-                                        $user_id=$row['assigned_to'];
-                                        $q3="select name from user where id=$user_id";
-                                        $rs3=mysqli_query($conn,$q3)or die(mysqli_error($conn));
-                                        $r3=$rs3->fetch_array();
-                                        if(!empty($row['assigned_to']))
-                                        $name=$r3['name'];
-                                        else $name="No one.";
-                                                
-                                        $status=$row['status'];
-                                        if($status=="1"){
-                                            $status="Free";
-                                            $name="No one.";
-                                        }else if($status=="2"){
-                                            $status="Given";
-                                        }else if($status=="3"){
-                                            $status="Assigned";
-                                        }else if($status=="4"){
-                                            $status="Returned";
-                                        }
-
-                                        echo "<tr><td>".$index."</td>
-                                              <td align='left'>".$r1['asset_name']."</td>
-                                              <td align='left'>".$row['description']."</td>
-                                              <td align='left'>".$row['owner']."</td>
-                                              <td align='left'>".$rentCompany."</td>
-                                              <td align='left'>".$status."</td>
-                                              <td align='left'>".$name."</td><td>";
-
-                                              if($status=="Given" || $status=="Assigned"){
-                                                  echo  "No Action";
-                                              }else if($status=="Free"){
-                                                  echo  "<button id='editbtn".$index."' type='button' class='btn btn-info btn-xs' data-toggle='modal' data-target='#exampleModal1' onclick=modalFunction1()  data-id='".$row['id']."' ><span class='glyphicon glyphicon-edit'></span> Assign</button>";
-                                              }else if($status=="Returned"){
-                                                  echo  "<button id='changebtn".$index."' onclick='acceptAdminAsset(".$row['id'].")' class='btn btn-success btn-xs' >Accept</button>";
-                                              }
-
-                                        echo  "</td><td><button id='editbtn".$index."' type='button' class='btn btn-info btn-xs' data-toggle='modal' data-target='#exampleModal3' onclick=modalFunction3() data-type='".$r1['asset_name']."' data-description='".$row['description']."' data-owner='".$row['owner']."' data-rent_company='".$rentCompany."' data-name='".$name."' data-status='".$status."' data-id='".$row['id']."' ><span class='glyphicon glyphicon-pencil'></span> Edit</button><button onclick=deleteAssetRow(".$row['id'].") class='btn btn-warning btn-xs' id='delete".$index."'><span class='glyphicon glyphicon-remove-sign'></span> Delete</button></td><tr>";
-                                        $index++;
-                                    }
-
-                                } else{
-                                    echo "<h4> No entry in this table ! <h4>";
-                                }
-
-                        }else{
-                          $filter=$_GET['filter2-assets'];
-                     
-                            $query = "Select * from inventory where status='$filter'";
-                                $result=mysqli_query($conn,$query)or die(mysqli_error($conn));
-                                if ($result->num_rows > 0) {
-                                    $index=1;
-                                    while ($row = $result->fetch_array()){
-                                                
-                                        $type_id=$row['type'];
-                                        $q1="select asset_name from asset_type where id='$type_id'";
-                                        $rs1=mysqli_query($conn,$q1)or die(mysqli_error($conn));
-                                        $r1=$rs1->fetch_array();
-
-                                        if($row['owner']=="Rent")
-                                        {
-                                            $rent_id=$row['rental_company'];
-                                            $q2="select rental_company_name from rental_companies where id='$rent_id'";
-                                            $rs2=mysqli_query($conn,$q2)or die(mysqli_error($conn));
-                                            $r2=$rs2->fetch_array();
-                                            $rentCompany=$r2['rental_company_name'];                                    
-                                        }else{
-                                            $rentCompany="NA";
-                                        }
-     
-                                        $user_id=$row['assigned_to'];
-                                        $q3="select name from user where id=$user_id";
-                                        $rs3=mysqli_query($conn,$q3)or die(mysqli_error($conn));
-                                        $r3=$rs3->fetch_array();
-                                        $name=$r3['name'];
-
-                                                
-                                        $status=$row['status'];
-                                        if($status=="1"){
-                                            $status="Free";
-                                            $name="No one.";
-                                        }else if($status=="2"){
-                                            $status="Given";
-                                        }else if($status=="3"){
-                                            $status="Assigned";
-                                        }else if($status=="4"){
-                                            $status="Returned";
-                                        }
+                <table class='table table-striped table-bordered table-hover table-condensed' id='assetsData' >
+                  <script type="text/javascript">
+                      window.onload = function() {
+                        var action;
+                        var filterType = localStorage.getItem('filterAssetType');
+                        var valueFilter = localStorage.getItem('filterAssetsAdmin');
+                          if(filterType==1){
+                              action="ACTION=getFilteredData&filter1-assets="+valueFilter+"&filter2-assets=all&filter3-assets=all";
+                          }else if(filterType==2){
+                              action="ACTION=getFilteredData&filter2-assets="+valueFilter+"&filter1-assets=all&filter3-assets=all";
+                          }else if(filterType==3){
+                              action="ACTION=getFilteredData&filter3-assets="+valueFilter+"&filter2-assets=all&filter1-assets=all";
+                          }
+                            var val=localStorage.getItem('filterAdminAssets');
+                            $("#assetsData").empty();
+                            $.ajax({
+                                                    url: "filterAdminAssets.php",
+                                                    type: "POST",
+                                                    data: action,
+                                                    success: function(json){
+                                                      $("#assetsData").append(json);
+                                                                    
+                                                    }
+                                                 })
                                         
-                                        if($status=="Given"){
-                                            if($index==1) //checking for index 1 to laod the table-headers
-                                            {
-                                              echo "<table class='table table-striped table-bordered table-hover table-condensed' id='tableItems' >
-                                                    <thead>
-                                                      <tr>
-                                                          <th>S.no</th>
-                                                          <th>Type</th>
-                                                          <th>Description</th>
-                                                          <th>Owner</th>
-                                                          <th>Rental Company</th>
-                                                          <th>Status</th>
-                                                          <th>Given To</th>
-                                                          <th>Action</th>
-                                                          <th>Update</th>
-                                                      </tr>
-                                                    </thead>
-                                                <tbody>";
-                                            }
-
-                                              echo "<tr><td>".$index."</td>
-                                              <td align='left'>".$r1['asset_name']."</td>
-                                              <td align='left'>".$row['description']."</td>
-                                              <td align='left'>".$row['owner']."</td>
-                                              <td align='left'>".$rentCompany."</td>
-                                              <td align='left'>".$status."</td>
-                                              <td align='left'>".$name."</td><td>";
-
-                                              if($status=="Given" || $status=="Assigned"){
-                                                  echo  "No Action";
-                                              }else if($status=="Free"){
-                                                  echo   "<button id='editbtn".$index."' type='button' class='btn btn-info btn-xs' data-toggle='modal' data-target='#exampleModal1' onclick=modalFunction1()  data-id='".$row['id']."' ><span class='glyphicon glyphicon-edit'></span> Assign</button>";
-                                              }else if($status=="Returned"){
-                                                  echo  "<button id='changebtn".$index."' onclick='acceptAdminAsset(".$row['id'].")' class='btn btn-success btn-xs' >Accept</button>";
-                                              }
-
-                                              echo    "</td><td><button id='editbtn".$index."' type='button' class='btn btn-info btn-xs' data-toggle='modal' data-target='#exampleModal3' onclick=modalFunction3() data-type='".$r1['asset_name']."' data-description='".$row['description']."' data-owner='".$row['owner']."' data-rent_company='".$rentCompany."' data-name='".$name."' data-status='".$status."' data-id='".$row['id']."' ><span class='glyphicon glyphicon-pencil'></span> Edit</button><button onclick=deleteAssetRow(".$row['id'].") class='btn btn-warning btn-xs' id='delete".$index."'><span class='glyphicon glyphicon-remove-sign'></span> Delete</button> 
-                                    </td></td><tr>";
-
-                                        }else if($status=="Assigned" ){
-                                              if($index==1)   //checking for index 1 to laod the table-headers
-                                                {
-                                                  echo "<table class='table table-striped table-bordered table-hover table-condensed' id='tableItems' >
-                                                        <thead>
-                                                          <tr>
-                                                              <th>S.no</th>
-                                                              <th>Type</th>
-                                                              <th>Description</th>
-                                                              <th>Owner</th>
-                                                              <th>Rental Company</th>
-                                                              <th>Status</th>
-                                                              <th>Assigned To</th>
-                                                              <th>Action</th>
-                                                              <th>Update</th>
-                                                          </tr>
-                                                        </thead>
-                                                  <tbody>";
-                                                }
-
-                                          echo "<tr><td>".$index."</td>
-                                              <td align='left'>".$r1['asset_name']."</td>
-                                              <td align='left'>".$row['description']."</td>
-                                              <td align='left'>".$row['owner']."</td>
-                                              <td align='left'>".$rentCompany."</td>
-                                              <td align='left'>".$status."</td>
-                                              <td align='left'>".$name."</td><td>";
-
-                                              if($status=="Given" || $status=="Assigned"){
-                                                  echo  "No Action";
-                                              }else if($status=="Free"){
-                                                  echo   "<button id='editbtn".$index."' type='button' class='btn btn-info btn-xs' data-toggle='modal' data-target='#exampleModal1' onclick=modalFunction1()  data-id='".$row['id']."' ><span class='glyphicon glyphicon-edit'></span> Assign</button>";
-                                              }else if($status=="Returned"){
-                                                  echo  "<button id='changebtn".$index."' onclick='acceptAdminAsset(".$row['id'].")' class='btn btn-success btn-xs' >Accept</button>";
-                                              }
-
-                                      echo    "</td><td><button id='editbtn".$index."' type='button' class='btn btn-info btn-xs' data-toggle='modal' data-target='#exampleModal3' onclick=modalFunction3() data-type='".$r1['asset_name']."' data-description='".$row['description']."' data-owner='".$row['owner']."' data-rent_company='".$rentCompany."' data-name='".$name."' data-status='".$status."' data-id='".$row['id']."' ><span class='glyphicon glyphicon-pencil'></span> Edit</button><button onclick=deleteAssetRow(".$row['id'].") class='btn btn-warning btn-xs' id='delete".$index."'><span class='glyphicon glyphicon-remove-sign'></span> Delete</button> 
-                                    </td></td><tr>";
-
-                                        }else if($status=="Returned"){
-                                              if($index==1){  //checking for index 1 to laod the table-headers
-                                                echo "<table class='table table-striped table-bordered table-hover table-condensed' id='tableItems' >
-                                                      <thead>
-                                                      <tr>
-                                                          <th>S.no</th>
-                                                          <th>Type</th>
-                                                          <th>Description</th>
-                                                          <th>Owner</th>
-                                                          <th>Rental Company</th>
-                                                          <th>Status</th>
-                                                          <th>Returned By</th>
-                                                          <th>Action</th>
-                                                          <th>Update</th>
-                                                      </tr>
-                                                      </thead>
-                                                    <tbody>";                                          
-                                              }
-
-
-                                          echo "<tr><td>".$index."</td>
-                                              <td align='left'>".$r1['asset_name']."</td>
-                                              <td align='left'>".$row['description']."</td>
-                                              <td align='left'>".$row['owner']."</td>
-                                              <td align='left'>".$rentCompany."</td>
-                                              <td align='left'>".$status."</td>
-                                              <td align='left'>".$name."</td><td>";
-
-                                              if($status=="Given" || $status=="Assigned"){
-                                                  echo  "No Action";
-                                              }else if($status=="Free"){
-                                                  echo   "<button id='editbtn".$index."' type='button' class='btn btn-info btn-xs' data-toggle='modal' data-target='#exampleModal1' onclick=modalFunction1()  data-id='".$row['id']."' ><span class='glyphicon glyphicon-edit'></span> Assign</button>";
-                                              }else if($status=="Returned"){
-                                                  echo  "<button id='changebtn".$index."' onclick='acceptAdminAsset(".$row['id'].")' class='btn btn-success btn-xs' >Accept</button>";
-                                              }
-
-                                          echo    "</td><td><button id='editbtn".$index."' type='button' class='btn btn-info btn-xs' data-toggle='modal' data-target='#exampleModal3' onclick=modalFunction3() data-type='".$r1['asset_name']."' data-description='".$row['description']."' data-owner='".$row['owner']."' data-rent_company='".$rentCompany."' data-name='".$name."' data-status='".$status."' data-id='".$row['id']."' ><span class='glyphicon glyphicon-pencil'></span> Edit</button><button onclick=deleteAssetRow(".$row['id'].") class='btn btn-warning btn-xs' id='delete".$index."'><span class='glyphicon glyphicon-remove-sign'></span> Delete</button></td><tr>";
-
-                                  }else if ($status=="Free") {
-                                              if($index==1)   //checking for index 1 to laod the table-headers
-                                                {
-                                                  echo "<table class='table table-striped table-bordered table-hover table-condensed' id='tableItems' >
-                                                        <thead>
-                                                          <tr>
-                                                            <th>S.no</th>
-                                                            <th>Type</th>
-                                                            <th>Description</th>
-                                                            <th>Owner</th>
-                                                            <th>Rental Company</th>
-                                                            <th>Status</th>
-                                                            <th>Action</th>
-                                                            <th>Update</th>
-                                                          </tr>
-                                                        </thead>
-                                                  <tbody>";
-                                                }
-
-                                          echo "<tr><td>".$index."</td>
-                                              <td align='left'>".$r1['asset_name']."</td>
-                                              <td align='left'>".$row['description']."</td>
-                                              <td align='left'>".$row['owner']."</td>
-                                              <td align='left'>".$rentCompany."</td>
-                                              <td align='left'>".$status."</td><td>";
-
-                                              if($status=="Given" || $status=="Assigned"){
-                                                  echo  "No Action";
-                                              }else if($status=="Free"){
-                                                  echo   "<button id='editbtn".$index."' type='button' class='btn btn-info btn-xs' data-toggle='modal' data-target='#exampleModal1' onclick=modalFunction1()  data-id='".$row['id']."' ><span class='glyphicon glyphicon-edit'></span> Assign</button>";
-                                              }else if($status=="Returned"){
-                                                  echo  "<button id='changebtn".$index."' onclick='acceptAdminAsset(".$row['id'].")' class='btn btn-success btn-xs' >Accept</button>";
-                                              }
-
-                                      echo    "</td><td><button id='editbtn".$index."' type='button' class='btn btn-info btn-xs' data-toggle='modal' data-target='#exampleModal3' onclick=modalFunction3() data-type='".$r1['asset_name']."' data-description='".$row['description']."' data-owner='".$row['owner']."' data-rent_company='".$rentCompany."' data-name='".$name."' data-status='".$status."' data-id='".$row['id']."' ><span class='glyphicon glyphicon-pencil'></span> Edit</button><button onclick=deleteAssetRow(".$row['id'].") class='btn btn-warning btn-xs' id='delete".$index."'><span class='glyphicon glyphicon-remove-sign'></span> Delete</button></td><tr>";
-                                  }
-                                    $index++;
-                              }
-                          } else{
-                                    echo "<h4> No entry in this table ! <h4>";
-                            }
-                        }
-                            
-                        }
+                        };
+                    </script>
+                    
+                    <script type="text/javascript">
+                       $(function() { 
+                        
+                       $('#filter1-assets').change(function(){
+                        $("#assetsData").empty();
+                        var value;
+                                        if($(this).val()=="all"){
+                                            value="all";
+                                        }else if($(this).val()=="company" ){
+                                             value="company";
+                                        }else if($(this).val()=="rent"){
+                                              value="rent";
+                                        }
+                                         $.ajax({
+                                                    url: "filterAdminAssets.php",
+                                                    type: "POST",
+                                                    data: "ACTION=getFilteredData&filter1-assets="+value+"&filter2-assets=all&filter3-assets=all",
+                                                    success: function(json){
+                                                      $("#assetsData").append(json);
+                                                                    
+                                                    }
+                                                 })
+                                        
+                                      });
+                       $('#filter2-assets').change(function(){
+                        $("#assetsData").empty();
+                        var value;
+                                        if($(this).val()=="all"){
+                                            value="all";
+                                        }else if($(this).val()=="1" ){
+                                             value="1";
+                                        }else if($(this).val()=="2"){
+                                              value="2";
+                                        }else if($(this).val()=="3" ){
+                                             value="3";
+                                        }else if($(this).val()=="4"){
+                                              value="4";
+                                        }
+                                         $.ajax({
+                                                    url: "filterAdminAssets.php",
+                                                    type: "POST",
+                                                    data: "ACTION=getFilteredData&filter2-assets="+value+"&filter1-assets=all&filter3-assets=all",
+                                                    success: function(json){
+                                                      $("#assetsData").append(json);
+                                                                    
+                                                    }
+                                                 })
+                                        
+                                      });
+                       $('#filter3-assets').change(function(){
+                        $("#assetsData").empty();
+                        var value;
+                                        if($(this).val()=="all"){
+                                            value="all";
+                                        }else {
+                                             value=$(this).val();
+                                        }
+                                         $.ajax({
+                                                    url: "filterAdminAssets.php",
+                                                    type: "POST",
+                                                    data: "ACTION=getFilteredData&filter3-assets="+value+"&filter1-assets=all&filter2-assets=all",
+                                                    success: function(json){
+                                                      $("#assetsData").append(json);
+                                                                    
+                                                    }
+                                                 })
+                                        
+                                      });
+                      });
+                    </script>
 
                     
-                        ?>
                         </tbody>
                     </table>
             </section><br>
@@ -752,6 +237,31 @@ include 'adminBars.php';
             <!-- Button for adding new inventory manually -->
             <div> 
        <center>   <button id='addbtn".$index."' type='button' class='btn btn-info btn-lg' data-toggle='modal' data-target='#exampleModal2'><span class='glyphicon glyphicon-plus'></span> Add New Inventory</button> </center>
+
+
+       <div class="panel panel-default">
+                    <div class="panel-heading">
+                        Download Company/Rent wise Excel: 
+                        <a href="javascript:void(0);" onclick="$('#exportTo').slideToggle();">Export File</a>
+                 <!--      <p style="float: right">Download: <a href="writeToProjectExpenseCSV.php" download >Sample</a></p>   -->
+                    </div>
+                    <div class="panel-body">
+                        <form action="writeToAdminAssetsExcel.php" method="post" id="exportTo" class="form-inline">
+                            <div class="form-group" >
+                                <label>Select Company/Rent: </label>
+                                <select class="form-control" id="asset_idEx" name="asset_idEx">
+                                    <option value="0">--select--</option>
+                                    <option value="Rent">Rent</option>
+                                    <option value="tagbin">Company</option>
+                                </select>
+                            </div>
+                          
+                            <div class="form-group">
+                                <input type="submit" class="btn btn-primary" name="exportSubmit" value="EXPORT">
+                            </div>
+                        </form>
+                    </div>
+                </div>
             <div class="modal fade" id="exampleModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel2" aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
@@ -782,6 +292,12 @@ include 'adminBars.php';
                                         <label for="description" class="col-sm-2 control-label">Description</label>
                                         <div class="col-sm-10">
                                           <input type="text" class="form-control" id="description" name="description" placeholder="Description">
+                                        </div>
+                                      </div>
+                                      <div class="form-group" >
+                                        <label for="price" class="col-sm-2 control-label">Price</label>
+                                        <div class="col-sm-10">
+                                          <input type="number" class="form-control" id="price" name="price" placeholder="Price">
                                         </div>
                                       </div>
                                       <div class="form-group">
@@ -999,6 +515,13 @@ include 'adminBars.php';
                                           <input type="text" class="form-control" id="chgDescription" name="chgDescription" placeholder="Description" >
                                         </div>
                                       </div>
+
+                                      <div class="form-group" >
+                                        <label for="chgPrice" class="col-sm-3 control-label">Price</label>
+                                        <div class="col-sm-7">
+                                          <input type="number" class="form-control" id="chgPrice" name="chgPrice" placeholder="Price" >
+                                        </div>
+                                      </div>
                                       
                                       <div class="form-group">
                                       <input type="hidden" name="chgInvId" id="chgInvId">
@@ -1041,10 +564,10 @@ include 'adminBars.php';
                 </div>
                 <script type="text/javascript">
                     window.setTimeout(function() {
-              $("#alert_message").fadeTo(500, 0).slideUp(500, function(){
-                $(this).remove(); 
-              });
-            }, 3000);
+                      $("#alert_message").fadeTo(500, 0).slideUp(500, function(){
+                        $(this).remove(); 
+                      });
+                    }, 3000);
                 </script>
 
             </section>
@@ -1058,24 +581,34 @@ include 'adminBars.php';
     <script type="text/javascript">
 
     $(document).ready(function(){
-
-            if(localStorage.getItem('filter1-assets')){
-                      $('#filter1-assets').val(localStorage.getItem('filter1-assets'));
-                  }
+            var filterType = localStorage.getItem('filterAssetType');
+            if(filterType==1){
+                $('#filter1-assets').val(localStorage.getItem('filterAssetsAdmin'));
+            }else if(filterType==2){
+                $('#filter2-assets').val(localStorage.getItem('filterAssetsAdmin'));
+            }else if(filterType==3){
+                $('#filter3-assets').val(localStorage.getItem('filterAssetsAdmin'));
+            }
 
                   $('#filter1-assets').change(function(){
-                    localStorage.removeItem('filter2-assets');
-                      localStorage.setItem('filter1-assets',$('#filter1-assets').val() );
+                   // localStorage.removeItem('filter2-assets');
+                      localStorage.setItem('filterAssetType','1' );
+                      localStorage.setItem('filterAssetsAdmin',$('#filter1-assets').val() );
                     
                   });
 
-                  if(localStorage.getItem('filter2-assets')){
-                      $('#filter2-assets').val(localStorage.getItem('filter2-assets'));
-                  }
 
                   $('#filter2-assets').change(function(){
-                        localStorage.removeItem('filter1-assets');
-                      localStorage.setItem('filter2-assets',$('#filter2-assets').val() );
+                      //localStorage.removeItem('filter1-assets');
+                      localStorage.setItem('filterAssetType','2' );
+                      localStorage.setItem('filterAssetsAdmin',$('#filter2-assets').val() );
+                    
+                  });
+
+                  $('#filter3-assets').change(function(){
+                      //localStorage.removeItem('filter1-assets');
+                      localStorage.setItem('filterAssetType','3' );
+                      localStorage.setItem('filterAssetsAdmin',$('#filter3-assets').val() );
                     
                   });
 
@@ -1117,6 +650,7 @@ include 'adminBars.php';
                 var status = $("#status").val();
                 var assignedTo = $("#assignedTo").val();
                 var rentCompany = $("#rentCompany").val();
+                var price = $("#price").val();
 
                 if ( description == '' || assetType == '0' || owner=='0' || status=='0' || assignedTo=='') {
                     alert("Please fill the empty fields!");
@@ -1125,7 +659,7 @@ include 'adminBars.php';
                     $.ajax({
                         url: "addNewInventory.php",
                         type: "POST",
-                        data:"ACTION=addInventory&TYPE="+assetType+"&DESCRIPTION="+description+"&OWNER="+owner+"&STATUS="+status+"&ASSIGNEDTO="+assignedTo+"&RENTCOMPANY="+rentCompany,
+                        data:"ACTION=addInventory&TYPE="+assetType+"&DESCRIPTION="+description+"&PRICE="+price+"&OWNER="+owner+"&STATUS="+status+"&ASSIGNEDTO="+assignedTo+"&RENTCOMPANY="+rentCompany,
                         success: function(data){
                             if(data=="1") {
                                 alert ("Inventory Added!");
@@ -1151,6 +685,7 @@ include 'adminBars.php';
                 var newAssignedEmail = $("#newAssignedEmail").val();
                 var rentName = $("#rentName").val();
                 var chgInvId = $("#chgInvId").val();
+                var chgPrice = $("#chgPrice").val();
 
 
                 //if ( description == '' || assetType == '0' || owner=='0' || status=='0' || assignedTo=='') {
@@ -1160,7 +695,7 @@ include 'adminBars.php';
                     $.ajax({
                         url: "changeInventoryDetails.php",
                         type: "POST",
-                        data:"ACTION=changeDetails&assetId="+assetId+"&chgDescription="+chgDescription+"&ownerName="+ownerName+"&newStatus="+newStatus+"&newAssignedEmail="+newAssignedEmail+"&rentName="+rentName+"&chgInvId="+chgInvId,
+                        data:"ACTION=changeDetails&assetId="+assetId+"&chgDescription="+chgDescription+"&ownerName="+ownerName+"&newStatus="+newStatus+"&newAssignedEmail="+newAssignedEmail+"&rentName="+rentName+"&chgInvId="+chgInvId+"&chgPrice="+chgPrice,
                         success: function(data){
                             if(data=="1") {
                                 alert ("Inventory Details Changed!");
@@ -1213,6 +748,7 @@ include 'adminBars.php';
                             $('#exampleModal3').find('input#assignedName').val($(event.relatedTarget).data('name'));
                              $('#exampleModal3').find('input#currentStatus').val($(event.relatedTarget).data('status'));
                               $('#exampleModal3').find('input#owner').val($(event.relatedTarget).data('owner'));
+                                $('#exampleModal3').find('input#chgPrice').val($(event.relatedTarget).data('price'));
 
                
                      });

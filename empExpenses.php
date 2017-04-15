@@ -46,18 +46,16 @@ include 'empSession.php';
     <div class="container-fluid">
         <div class="navbar-header">
             <a id="menu-toggle" href="#" class="navbar-toggle pull-left">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
             </a>
-
             <a class="navbar-brand" href="empExpenses.php">
-             <img src="logo.png" style="width:120px;height:45px;padding-bottom: 20px;margin-top: 0px;">
+            <img src="logo.png" style="width:120px;height:45px;padding-bottom: 20px;margin-top: 0px;">
             </a>
         </div>
         
-       
         <ul class="nav navbar-nav navbar-right">
           <li class="dropdown">
               <a class="dropdown-toggle" id="login_user_name" data-toggle="dropdown" href="#" style="background-color: white; ">
@@ -113,8 +111,8 @@ include 'empSession.php';
                     <div class="form-group" >
                     <label style="color: #2a409f">Filters </label>
                         <select name="filter2-employees" class="form-control" id="filter2-employees" style="background: #fcf9f9" >
-                            <option value="0" >Submitted</option>
-                            <option value="all" selected="">All</option>
+                            <option value="0" selected="" >Submitted</option>
+                            <option value="all" >All</option>
                             <option value="1">Approved</option>
                             <option value="2">Rejected</option>
                         </select>                                  
@@ -135,7 +133,7 @@ include 'empSession.php';
                                                     }
                                                  })
                                         
-                                                              };
+                        };
                     </script>
                     
                     <script type="text/javascript">

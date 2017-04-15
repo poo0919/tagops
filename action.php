@@ -35,7 +35,7 @@ include 'connection.php';
               }
 
               //on new user register -> add a row for his/her leaves in leaves table 
-              $q2 = "INSERT INTO leaves (user_id,pl_cl_ml,comp_off) VALUES ('$id','33','0')";
+              $q2 = "INSERT INTO leaves (user_id,pl_cl_ml,comp_off) VALUES ('$id','24','2')";
               mysqli_query($conn,$q2)or die(mysqli_error($conn));
               echo "1";
 

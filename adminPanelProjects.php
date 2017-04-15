@@ -253,7 +253,7 @@ include 'adminBars.php';
 
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        Download Project wise CSV: 
+                        Download Project wise Excel: 
                         <a href="javascript:void(0);" onclick="$('#exportTo').slideToggle();">Export File</a>
                  <!--      <p style="float: right">Download: <a href="writeToProjectExpenseCSV.php" download >Sample</a></p>   -->
                     </div>

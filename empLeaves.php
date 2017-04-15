@@ -110,7 +110,7 @@ include 'empSession.php';
                <?php
                include 'connection.php';
                $user_id=$_SESSION['userid'];
-                                           $query="Select * from leave_data where user_id='$user_id' AND (status='2' OR status='4')";
+                                           $query="Select * from leave_data where user_id='$user_id' AND (status='1' || status='2' || status='4' || status='6') order by for_date DESC";
                                            $result=mysqli_query($conn,$query)or die(mysqli_error($conn));
                                            if ($result->num_rows > 0) {
                                                
@@ -123,9 +123,11 @@ include 'empSession.php';
                                                     <tr>
                                                         <th>S.No.</th>
                                                         <th>Leave Type</th>
+                                                        <th>Half/Full</th>
                                                         <th>Leave Date</th>
                                                         <th>Against Date</th>
                                                         <th>Reason</th>
+                                                        <th>Status</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -136,6 +138,7 @@ include 'empSession.php';
                                                   $type="";
                                                   $againstDate="";
                                                   $reason="";
+                                                  $status="";
 
                                                   $dateCreated1=date_create($row['for_date']);
                                                   $formattedForDate1=date_format($dateCreated1, 'd-m-Y');
@@ -144,25 +147,48 @@ include 'empSession.php';
                                                   if($row['type_id']=="1"){
                                                     $type="CL+PL+ML";
                                                     $formattedAgainstDate2="NA";
-                                                    $reason="NA";
+                                                  //  $reason="NA";
                                                   }else if($row['type_id']=="2"){
                                                     $type="Comp Off";
                                                     $againstDate=$row['against_date'];
                                                     $dateCreated2=date_create($againstDate);
                                                     $formattedAgainstDate2=date_format($dateCreated2, 'd-m-Y');
-                                                    $reason=$row['reason'];
+                                                  //  $reason=$row['reason'];
                                                   }else if($row['type_id']=="3"){
                                                     $type="RH";
                                                     $formattedAgainstDate2="NA";
-                                                    $reason="NA";
+                                                  //  $reason="NA";
                                                   }
+
+                                                  $reason=$row['reason'];
+                                                  $statusNum=$row['status'];
+                                                  $statusColor="";
+                                                  if($statusNum=='1'){
+                                                      $status="Applied";
+                                                      $statusColor="#71D3f4";
+                                                  }else if ($statusNum=='2') {
+                                                      $status="Approved";
+                                                      $statusColor="#7cc576";
+                                                  }else if ($statusNum=='4') {
+                                                      $status="Used";
+                                                      $statusColor="#ec585d";
+                                                  }else if ($statusNum=='6') {
+                                                      $status="Rejected";
+                                                      $statusColor="#fea862";
+                                                  }
+
+                                                  if(empty($row['half_full']))
+                                                    $row['half_full']="NA";
+
 
                                                   echo "<tr>
                                                         <td>".$inc.".</td>
                                                         <td>".$type."</td>
+                                                        <td>".$row['half_full']."</td>
                                                         <td>".$formattedForDate1."</td>
                                                         <td>".$formattedAgainstDate2."</td>
                                                         <td>".$reason."</td>
+                                                        <td style='color:".$statusColor."'>".$status."</td>
                                                   </tr>";
 
                                                 
@@ -223,7 +249,7 @@ include 'empSession.php';
                         <table class="table table-hover table-bordered table-condensed"  style="font-family: Montserrat ;"  >
                         
                                          <?php
-                                            $q3="select * from leave_data where user_id='$user_id' AND type_id='2' ";
+                                            $q3="select * from leave_data where user_id='$user_id' AND type_id='2' order by against_date DESC ";
                                             $re3=mysqli_query($conn,$q3)or die(mysqli_error($conn));
                                             if ($re3->num_rows > 0) {
                                               $index=1;
@@ -304,7 +330,7 @@ include 'empSession.php';
 
                                 <tbody>
                                          <?php
-                                            $q3="select * from restricted_holidays";
+                                            $q3="select * from restricted_holidays order by date";
                                             $re3=mysqli_query($conn,$q3)or die(mysqli_error($conn));
                                             if ($re3->num_rows > 0) {
                                               $index=1;
@@ -349,6 +375,14 @@ include 'empSession.php';
                           
                   </div>
 
+                  <div class="form-group"  id="half_full1" style="display: none;" >
+                          <label class="control-label " for="halfFull1">Half/Full</label>
+                          
+                            <select class="form-control" id="halfFull1" name="halfFull1">
+                              <option value="Full" selected="">Full Day</option>
+                              <option value="Half" >Half Day</option>
+                            </select>
+                  </div>
                  
                   <div class="form-group" id="against_date1" style="display: none;" >
                           <label class="control-label " for="againstDate1">Against Date</label>
@@ -422,6 +456,15 @@ include 'empSession.php';
                           
                   </div>
 
+                  <div class="form-group"  id="half_full2" style="display: none;" >
+                          <label class="control-label " for="halfFull2">Half/Full</label>
+                          
+                            <select class="form-control" id="halfFull2" name="halfFull2">
+                              <option value="Full" selected="">Full Day</option>
+                              <option value="Half" >Half Day</option>
+                            </select>
+                  </div>
+
                  
                   <div class="form-group" id="against_date2" style="display: none;" >
                           <label class="control-label " for="againstDate2">Against Date</label>
@@ -484,7 +527,15 @@ include 'empSession.php';
                                       }
                                   ?>     
                             </select>
+                  </div>
+
+                  <div class="form-group"  id="half_full3" style="display: none;" >
+                          <label class="control-label " for="halfFull3">Half/Full</label>
                           
+                            <select class="form-control" id="halfFull3" name="halfFull3">
+                              <option value="Full" selected="">Full Day</option>
+                              <option value="Half" >Half Day</option>
+                            </select>
                   </div>
 
                  
@@ -552,6 +603,15 @@ include 'empSession.php';
                           
                   </div>
 
+                  <div class="form-group"  id="half_full4" style="display: none;" >
+                          <label class="control-label " for="halfFull4">Half/Full</label>
+                          
+                            <select class="form-control" id="halfFull4" name="halfFull4">
+                              <option value="Full" selected="">Full Day</option>
+                              <option value="Half" >Half Day</option>
+                            </select>
+                  </div>
+
                  
                   <div class="form-group" id="against_date4" style="display: none;" >
                           <label class="control-label " for="againstDate4">Against Date</label>
@@ -613,6 +673,15 @@ include 'empSession.php';
                                   ?>     
                             </select>
                           
+                  </div>
+
+                  <div class="form-group"  id="half_full5" style="display: none;" >
+                          <label class="control-label " for="halfFull5">Half/Full</label>
+                          
+                            <select class="form-control" id="halfFull5" name="halfFull5">
+                              <option value="Full" selected="">Full Day</option>
+                              <option value="Half" >Half Day</option>
+                            </select>
                   </div>
 
                  
@@ -744,6 +813,7 @@ document.getElementById("login_user_name").prepend(localStorage.getItem('name'))
                                             $('#for_date1').show();
                                             $('#rh_date1').hide();
                                             $("#Reason1").show();
+                                            $("#half_full1").hide();
                                             $("#reason1").val("Select Against Date");
                                         //    $("#reason1").prop('disabled', true);
                                         }else if($(this).val()=="1"){
@@ -752,12 +822,14 @@ document.getElementById("login_user_name").prepend(localStorage.getItem('name'))
                                           $('#for_date1').val("");
                                           $('#for_date1').show();
                                           $("#Reason1").show();
+                                          $("#half_full1").show();
                                           $("#reason1").val("");
                                       //    $("#reason1").prop('disabled', false);
                                         }else if($(this).val()=="3"){
                                           $('#against_date1').hide();
                                           $('#for_date1').show();
                                            $('#rh_date1').show();
+                                           $("#half_full1").hide();
                                            $("#Reason1").hide();
                                         //   $("#reason1").val("Select RH Date");
                                       //     $("#reason1").prop('disabled', true);
@@ -779,6 +851,7 @@ document.getElementById("login_user_name").prepend(localStorage.getItem('name'))
                                              $('#for_date2').show();
                                             $('#rh_date2').hide();
                                             $("#Reason2").show();
+                                            $("#half_full2").hide();
                                             $("#reason2").val("Select Against Date");
                                         //    $("#reason2").prop('disabled', true);
                                         }else if($(this).val()=="1"){
@@ -787,12 +860,14 @@ document.getElementById("login_user_name").prepend(localStorage.getItem('name'))
                                           $('#for_date2').val("");
                                           $('#for_date2').show();
                                           $("#Reason2").show();
+                                          $("#half_full2").show();
                                           $("#reason2").val("");
                                       //    $("#reason2").prop('disabled', false);
                                         }else if($(this).val()=="3"){
                                           $('#against_date2').hide();
                                           $('#for_date2').show();
                                            $('#rh_date2').show();
+                                           $("#half_full2").hide();
                                            $("#Reason2").hide();
                                         //   $("#reason2").val("Select RH Date");
                                         //   $("#reason2").prop('disabled', true);
@@ -813,6 +888,7 @@ document.getElementById("login_user_name").prepend(localStorage.getItem('name'))
                                                 $('#for_date3').show();
                                                 $('#rh_date3').hide();
                                                 $("#Reason3").show();
+                                                $("#half_full3").hide();
                                                $("#reason3").val("Select Against Date");
                                             //    $("#reason3").prop('disabled', true);
                                             }else if($(this).val()=="1"){
@@ -820,12 +896,14 @@ document.getElementById("login_user_name").prepend(localStorage.getItem('name'))
                                               $('#for_date3').show();
                                               $('#rh_date3').hide();
                                               $("#Reason3").show();
+                                              $("#half_full3").show();
                                               $("#reason3").val("");
                                             //  $("#reason3").prop('disabled', false);
                                             }else if($(this).val()=="3"){
                                               $('#against_date3').hide();
                                               $('#for_date3').show();
                                                $('#rh_date3').show();
+                                               $("#half_full3").hide();
                                                $("#Reason3").hide();
                                              //  $("#reason3").val("Select RH Date");
                                             //   $("#reason3").prop('disabled', true);
@@ -846,6 +924,7 @@ document.getElementById("login_user_name").prepend(localStorage.getItem('name'))
                                                      $('#for_date4').show();
                                                      $('#rh_date4').hide();
                                                      $("#Reason4").show();
+                                                     $("#half_full4").hide();
                                                      $("#reason4").val("Select Against Date");
                                                   //   $("#reason4").prop('disabled', true);
                                             $('#rh_date4').hide();
@@ -854,11 +933,13 @@ document.getElementById("login_user_name").prepend(localStorage.getItem('name'))
                                                   $('#rh_date4').hide();
                                                   $('#for_date4').show();
                                                   $("#Reason4").show();
+                                                  $("#half_full4").show();
                                                   $("#reason4").val("");
                                                 }else if($(this).val()=="3"){
                                                   $('#against_date4').hide();
                                                   $('#for_date4').show();
                                                    $('#rh_date4').show();
+                                                   $("#half_full4").hide();
                                                    $("#Reason4").hide();
                                                  //  $("#reason4").val("Select RH Date");
                                                 //   $("#reason4").prop('disabled', true);
@@ -879,6 +960,7 @@ document.getElementById("login_user_name").prepend(localStorage.getItem('name'))
                                                     $('#rh_date5').hide();
                                                      $('#for_date5').show();
                                                      $("#Reason5").show();
+                                                     $("#half_full5").hide();
                                                      $("#reason5").val("Select Against Date");
                                                   //   $("#reason5").prop('disabled', true);
                                             $('#rh_date5').hide();
@@ -887,12 +969,14 @@ document.getElementById("login_user_name").prepend(localStorage.getItem('name'))
                                                   $('#for_date5').show();
                                                   $('#rh_date5').hide();
                                                   $("#Reason5").show();
+                                                  $("#half_full5").show();
                                                   $("#reason5").val("");
                                                 }else if($(this).val()=="3"){
                                                   $('#against_date5').hide();
                                                   $('#for_date5').show();
                                                   $('#rh_date5').show();
                                                   $("#Reason5").hide();
+                                                  $("#half_full5").hide();
                                                   $("#reason5").val("Select RH Date");
                                                 //  $("#reason5").prop('disabled', true);
                                                 }

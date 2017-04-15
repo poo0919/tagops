@@ -23,28 +23,28 @@ include 'empSession.php';
 <link rel="stylesheet" href="empExpenses.css">
 
 <script>
-  $( function() {
+  $(function(){
     $( "#date" ).datepicker({ dateFormat: 'yy-mm-dd' });
-  } );
-  </script>
-  <style type="text/css">
-    h5,a{
-  margin-top: 0px;
-  margin-bottom: 0px;
+  });
+</script>
+<style type="text/css">
+  h5,a{
+    margin-top: 0px;
+    margin-bottom: 0px;
     font-family:Montserrat;
     font-size: 16px;
-} 
-.submenu-heading {
-        padding: 0px;
+  } 
+  .submenu-heading {
+    padding: 0px;
     padding-left: 0px;
     cursor: pointer;
-}
-    .btn{
-      width: 72px;
-      height: 25px;
-      color: white;
-    }
-  </style>
+  }
+  .btn{
+    width: 72px;
+    height: 25px;
+    color: white;
+  }
+</style>
 </head>
 <body >
 <nav class="navbar navbar-default navbar-fixed-top" role="navigation" >

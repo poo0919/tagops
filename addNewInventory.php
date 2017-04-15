@@ -11,6 +11,7 @@ include 'session.php';
          $status=$_POST['STATUS']; 
          $assignedTo=$_POST['ASSIGNEDTO'];
          $rentCompany=$_POST['RENTCOMPANY'];
+         $price=$_POST['PRICE'];
 
          if($assignedTo!='0'){ //if inventory is assigned to someone
 
@@ -21,7 +22,7 @@ include 'session.php';
 	        if ($row_cnt==1) {
 
 	         	$assigned_user_id=$row['id'];
-	            $query = "INSERT INTO inventory (type,description,owner,rental_company,status,assigned_to) VALUES ('$assetType','$description','$owner','$rentCompany','$status','$assigned_user_id')";
+	            $query = "INSERT INTO inventory (type,description,price,owner,rental_company,status,assigned_to) VALUES ('$assetType','$description','$price','$owner','$rentCompany','$status','$assigned_user_id')";
 	            $result=mysqli_query($conn,$query)or die(mysqli_error($conn));
 	            if ($result === TRUE) {
 	                echo "1";
@@ -36,7 +37,7 @@ include 'session.php';
 
 		}else{ // if inventory is not assigned to anyone
 
-			$query = "INSERT INTO inventory (type,description,owner,rental_company,status,assigned_to) VALUES ('$assetType','$description','$owner','$rentCompany','$status','$assignedTo')";
+			$query = "INSERT INTO inventory (type,description,price,owner,rental_company,status,assigned_to) VALUES ('$assetType','$description','$price','$owner','$rentCompany','$status','$assignedTo')";
 	        $result=mysqli_query($conn,$query)or die(mysqli_error($conn));
 	        if ($result === TRUE) {
 	            echo "1";
