@@ -1,44 +1,40 @@
 <?php
-include 'empSession.php';
+include 'api/empSession.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
   
-    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <title>Employee Records - TagOps</title>
-
+    <title>Employee Panel</title>
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
- <!--   <link rel="stylesheet" href="/resources/demos/style.css">  -->
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
- <!--   <link href="css/bootstrap.min.css" rel="stylesheet">  -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-<link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
-<link rel="stylesheet" href="empBars.css">
-<link rel="stylesheet" href="empExpenses.css">
-<style type="text/css">
-  h5,a{
-  margin-top: 0px;
-  margin-bottom: 0px;
-    font-family:Montserrat;
-    font-size: 16px;
-} 
-.submenu-heading {
+    <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+    <link rel="stylesheet" href="css/empBars.css">
+    <link rel="stylesheet" href="css/empExpenses.css">
+    <style type="text/css">
+      h5,a{
+        margin-top: 0px;
+        margin-bottom: 0px;
+        font-family:Montserrat;
+        font-size: 16px;
+      } 
+      .submenu-heading {
         padding: 0px;
-    padding-left: 0px;
-    cursor: pointer;
-}
-</style>
-<script>
-  $( function() {
-    $( "#date" ).datepicker({ dateFormat: 'yy-mm-dd' });
-  } );
-  </script>
+        padding-left: 0px;
+        cursor: pointer;
+      }
+    </style>
+    <script>
+      $( function() {
+        $( "#date" ).datepicker({ dateFormat: 'yy-mm-dd' });
+      } );
+      </script>
 </head>
 <body >
 
@@ -52,7 +48,7 @@ include 'empSession.php';
                 <span class="icon-bar"></span>
             </a>
             <a class="navbar-brand" href="empExpenses.php">
-            <img src="logo.png" style="width:120px;height:45px;padding-bottom: 20px;margin-top: 0px;">
+            <img src="images/logo.png" style="width:120px;height:45px;padding-bottom: 20px;margin-top: 0px;">
             </a>
         </div>
         
@@ -63,26 +59,47 @@ include 'empSession.php';
               <ul class="dropdown-menu">
                 <li><a href="empProfile.php">My Profile</a></li>
                 <li role="separator" class="divider"></li>
-                <li><a href="logout.php" id="logout-button" >Log Out</a></li>
+                <li><a href="api/logout.php" id="logout-button" >Log Out</a></li>
               </ul>
           </li>
            
         </ul>
         <div id="sidebar-wrapper" class="sidebar-toggle">
             <div id="nav-menu">
-                <div class="submenu">
-                    <div class="submenu-heading" id="expenses"> <h5 class="submenu-title" ><img src="Expenses.png" alt="expenses" >Expenses</h5> </div>                   
+                <div class="submenu" style="background: #373737;">
+                    <div class="submenu-heading" id="expenses"><a href="empExpenses.php" style="text-decoration: none !important;color:#ffffff;"> <h5 class="submenu-title" ><img src="images/Expenses-W.png" alt="expenses" >Expenses</h5> </a></div>                   
                 </div>
                 <div class="submenu">
-                    <div class="submenu-heading" id="leaves" > <h5 class="submenu-title" id="leaves"><img src="Leaves.png" alt="leaves" >Leaves</h5> </div>                   
+                    <div class="submenu-heading" id="leaves"><a href="empLeaves.php" style="text-decoration: none !important;color:#000000;"> <h5 class="submenu-title" id="leaves"><img src="images/Leaves.png" alt="leaves" id="leaveImg" >Leaves</h5></a> </div>                   
                 </div>
+                <div class="submenu" >
+                    <div class="submenu-heading" id="assets"><a href="empAssets.php" style="text-decoration: none !important;color:#000000;"> <h5 class="submenu-title" id="assest"><img src="images/Assets.png" alt="assets" >Assets</h5></a> </div>                   
+                </div>
+                <?php include_once('api/database.php');
+                    $conn = getDB();
+                  $user_id=$_SESSION['userid'];
+                  if(!empty($user_id)){
+                        $sql = "SELECT * FROM user WHERE rm_id='$user_id'";  //fetching RM details
+                        $mgrResult=mysqli_query($conn,$sql)or die(mysqli_error($conn));
+                        $flag=0;
+                        if ($mgrResult->num_rows > 0) {
+                            while($rowResult = $mgrResult->fetch_array()){
+                               $flag=1;
+                            }
+                        }
+                        if($flag==1){
+                          ?>
+                            <div class="submenu">
+                                <div class="submenu-heading" id="reportees"><a href="empReportees.php" style="text-decoration: none !important;color:#000000;"> <h5 class="submenu-title" id="reportees"><img src="images/Reportees.png" alt="reportees" >Reportees</h5></a> </div>                   
+                            </div>
+
+                          <?php
+                        }
+                  }
+                ?>
                 <div class="submenu">
-                    <div class="submenu-heading" id="assets"> <h5 class="submenu-title" id="assest"><img src="Assets.png" alt="assets" >Assets</h5> </div>                   
+                  <div class="submenu-heading" id="manhours"><a href="empManHours.php" style="text-decoration: none !important;color:#000000;"> <h5 class="submenu-title" id="manhours"><img src="images/Man-Hours.png" alt="manhours" >Man Hours</h5></a> </div>                   
                 </div>
-                <div class="submenu">
-                    <div class="submenu-heading" id="reportees"> <h5 class="submenu-title" id="reportees"><img src="Reportees.png" alt="reportees" >Reportees</h5> </div>                   
-                </div>
-                
 
             </div>
             
@@ -90,10 +107,6 @@ include 'empSession.php';
         
     </div>
 </nav>
-
-
-  
-
 
 <div id="page-wrapper" class="container" >
     <div class="bs-example">
@@ -103,11 +116,10 @@ include 'empSession.php';
             <li><a data-toggle="tab" href="#newExpenseTab" >NEW EXPENSES</a></li>
         </ul></center> 
      
-
         <div class="tab-content" id="myContent">
             <div id="myExpenseTab" class="tab-pane fade in active">
             
-                <form class="form-inline"  id="form-filter-emp" style="float:right;" >
+                <form class="form-inline"  id="form-filter-emp" style="float:left;" >
                     <div class="form-group" >
                     <label style="color: #2a409f">Filters </label>
                         <select name="filter2-employees" class="form-control" id="filter2-employees" style="background: #fcf9f9" >
@@ -124,15 +136,13 @@ include 'empSession.php';
                       window.onload = function() {
                             var val=localStorage.getItem('filter2-employees');
                             $.ajax({
-                                                    url: "filterMyEmpExpenses.php",
-                                                    type: "POST",
-                                                    data: "ACTION=getFilteredData&filter2-employees="+val,
-                                                    success: function(json){
-                                                      $("#filterMyEmpExpenseData").append(json);
-                                                                    
-                                                    }
-                                                 })
-                                        
+                              url: "api/empExpensesAPI.php",
+                              type: "POST",
+                              data: "ACTION=getFilteredData&filter2-employees="+val,
+                              success: function(json){
+                                $("#filterMyEmpExpenseData").append(json);
+                              }
+                            })
                         };
                     </script>
                     
@@ -142,27 +152,26 @@ include 'empSession.php';
                        $('#filter2-employees').change(function(){
                         $("#filterMyEmpExpenseData").empty();
                         var value;
-                                        if($(this).val()=="0"){
-                                            value="0";
-                                        }else if($(this).val()=="2" ){
-                                             value="2";
-                                        }else if($(this).val()=="1"){
-                                              value="1";
-                                        }else if($(this).val()=="all"){
-                                              value="all";
-                                        }
-                                         $.ajax({
-                                                    url: "filterMyEmpExpenses.php",
-                                                    type: "POST",
-                                                    data: "ACTION=getFilteredData&filter2-employees="+value,
-                                                    success: function(json){
-                                                      $("#filterMyEmpExpenseData").append(json);
-                                                                    
-                                                    }
-                                                 })
-                                        
-                                      });
+                        if($(this).val()=="0"){
+                          value="0";
+                        }else if($(this).val()=="2" ){
+                          value="2";
+                        }else if($(this).val()=="1"){
+                          value="1";
+                        }else if($(this).val()=="all"){
+                          value="all";
+                        }
+                        
+                        $.ajax({
+                          url: "api/empExpensesAPI.php",
+                          type: "POST",
+                          data: "ACTION=getFilteredData&filter2-employees="+value,
+                          success: function(json){
+                            $("#filterMyEmpExpenseData").append(json);
+                          }
+                        })
                       });
+                    });
                     </script>
                 </table>
             </div>
@@ -171,9 +180,8 @@ include 'empSession.php';
             <div id="myTransactionTab" class="tab-pane fade"><center>
            
             <?php 
-                    include 'connection.php';
-                              $userId=$_SESSION['userid'];
-                        $sql="select SUM(transactions) as sumBalance from wallet where user_id='$userId'";
+                   
+                        $sql="select SUM(transactions) as sumBalance from wallet where user_id='$user_id'";
                               $result = mysqli_query($conn,$sql)or die(mysqli_error($conn));
                                 if ($result->num_rows > 0) {
                                     while($row = $result->fetch_array()){
@@ -187,55 +195,40 @@ include 'empSession.php';
                     ?><br>
             <hr />​
               <table class="table table-bordered table-hover table-condensed" style="table-layout: fixed; width: 1150px;  font-family: Montserrat ;">
-                    
+                  <?php
+                    $query = "Select * from wallet where user_id='$user_id'";
+                    $result=mysqli_query($conn,$query)or die(mysqli_error($conn));
+                    if ($result->num_rows > 0) {
+                      $index=1;
+                  ?>
+                    <thead> <tr> <th>S.No.</th> <th>Date</th> <th>Transaction</th> <th>Remarks</th> </tr> </thead>
+                    <tbody>
 
+                  <?php
+                    while ($row = $result->fetch_array()){
+                      $dateCreated=date_create($row['date']);
+                      $formattedDate=date_format($dateCreated, 'd-m-Y');
                     
-                    <?php
-                     
-                              $user_id=$_SESSION['userid'];
-                                $query = "Select * from wallet where user_id='$user_id'";
-                                $result=mysqli_query($conn,$query)or die(mysqli_error($conn));
-                                if ($result->num_rows > 0) {
-                                    $index=1;
-                                    ?>
-                                    <thead>
-                                        <tr>
-                                          <th>S.No.</th> 
-                                          <th>Date</th>
-                                          <th>Transaction</th>
-                                          <th>Remarks</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-
-                                    <?php
-                                    while ($row = $result->fetch_array()){
+                      echo "<tr><td>".$index.".</td>
+                            <td align='left'>".$formattedDate."</td>
+                            <td align='left'>".$row['transactions']."</td>
+                            <td align='left'>".$row['remarks']."</td>";
                                         
-                                        $dateCreated=date_create($row['date']);
-                                        $formattedDate=date_format($dateCreated, 'd-m-Y');
-                    
-                                        echo "<tr><td>".$index.".</td>
-                                              <td align='left'>".$formattedDate."</td>
-                                              <td align='left'>".$row['transactions']."</td>
-                                              <td align='left'>".$row['remarks']."</td>";
-                                        
-                                                $index++;
-                                    }
-                                } else{
-                                    echo " No entry in this table !";
-                                }
-
-                    ?>
-                    </tbody>
+                      $index++;
+                    }
+                  } else{
+                    echo " No entry in this table !";
+                  }
+                  ?>
+                  </tbody>
                 </table>
                </center>
             </div>
             <div id="newExpenseTab" class="tab-pane fade">
            
             <?php 
-                    include 'connection.php';
-                              $userId=$_SESSION['userid'];
-                        $sql="select SUM(transactions) as sumBalance from wallet where user_id='$userId'";
+                    //include 'connection.php';
+                        $sql="select SUM(transactions) as sumBalance from wallet where user_id='$user_id'";
                               $result = mysqli_query($conn,$sql)or die(mysqli_error($conn));
                                 if ($result->num_rows > 0) {
                                     while($row = $result->fetch_array()){
@@ -256,7 +249,7 @@ include 'empSession.php';
                         <select class="form-control" id="project" name="project">
                         <option value="0" >--select--</option>
                             <?php
-                                include 'connection.php';
+                                //include 'connection.php';
                                 $query = "SELECT * FROM projects where state='1' order by name";
                                 $result = mysqli_query($conn,$query)or die(mysqli_error($conn));
                                 while ($rows = mysqli_fetch_array($result)) {
@@ -273,8 +266,8 @@ include 'empSession.php';
                         <select class="form-control" id="category" name="category">
                         <option value="0">--select--</option> 
                              <?php
-                                include 'connection.php';
-                                $query = "SELECT * FROM categories order by category";
+                               // include 'connection.php';
+                                $query = "SELECT * FROM categories where status='1' order by category";
                                 $result = mysqli_query($conn,$query)or die(mysqli_error($conn));
                                 while ($rows = mysqli_fetch_array($result)) {
                                     echo "<option value=" .$rows['id']. ">" .$rows['category']. "</option>";
@@ -315,7 +308,7 @@ include 'empSession.php';
                 <select class="form-control" id="payment" name="payment" >
                     <option value="0">--select--</option>
                         <?php
-                            include 'connection.php';
+                           // include 'connection.php';
                             $query = "SELECT * FROM payment order by mode";
                             $result = mysqli_query($conn,$query)or die(mysqli_error($conn));
                             while ($rows = mysqli_fetch_array($result)) {
@@ -373,21 +366,44 @@ include 'empSession.php';
     <script type="text/javascript">
 
     $(document).ready(function(){
-        // $("#empBars").load("empBars.html");
 
+
+        $("#leaves").hover(
+          function () {
+            $(this).find('img').attr('src', 'images/Leaves-W.png');
+          }, 
+          function () {
+             $(this).find('img').attr('src', 'images/Leaves.png');
+          }
+        );
+
+        $("#assets").hover(
+          function () {
+            $(this).find('img').attr('src', 'images/Assets-W.png');
+          }, 
+          function () {
+             $(this).find('img').attr('src', 'images/Assets.png');
+          }
+        );
+        $("#reportees").hover(
+          function () {
+            $(this).find('img').attr('src', 'images/Reportees-W.png');
+          }, 
+          function () {
+             $(this).find('img').attr('src', 'images/Reportees.png');
+          }
+        );
+
+        $("#manhours").hover(
+          function () {
+            $(this).find('img').attr('src', 'images/Man-Hours-W.png');
+          }, 
+          function () {
+            $(this).find('img').attr('src', 'images/Man-Hours.png');
+          }
+        );
         document.getElementById("login_user_name").prepend(localStorage.getItem('name'));
-            $("#expenses").click(function(e) {
-          window.location.href="empExpenses.php";
-        });
-              $("#leaves").click(function(e) {
-          window.location.href="empLeaves.php";
-        });
-                $("#assets").click(function(e) {
-          window.location.href="empAssets.php";
-        });
-                  $("#reportees").click(function(e) {
-          window.location.href="empReportees.php";
-        });
+          
 
         $('a[data-toggle="tab"]').on('show.bs.tab', function(e) {
             localStorage.setItem('activeEmpExpenseTabs', $(e.target).attr('href'));
@@ -469,9 +485,8 @@ include 'empSession.php';
                     formData.append('ACTION','submitdata');
                     
                     $.ajax({
-                        url: "action.php",
+                        url: "api/empExpensesAPI.php",
                         type: "POST",
-                    //    data: "ACTION=submitdata&PROJECT="+project+"&CATEGORY="+category+"&AMOUNT="+amount+"&DETAILS="+details+"&BILL="+bill+"&PAYMENT="+payment+"&TOKEN="+token+"&DATE="+date,
                         data: formData,
                         contentType: false,
                         processData: false,
@@ -492,8 +507,6 @@ include 'empSession.php';
                     })
                 }
             });
-            
-     
             
         $("#cancel-user-button").click(function(e){
                 e.preventDefault();
@@ -518,21 +531,17 @@ include 'empSession.php';
     });
 
     function removeRecord(dataId){
-            var r = confirm("Are you sure you want delete this entry?");
-                        if (r == true) {
-                            $.ajax({
-                                        url: "removeEntry.php",
-                                        type: "POST",
-                                        data: "ACTION=delete&dataId="+dataId,
-                                        success: function(data){
-                                            window.location.reload();
-                                        }
-                                    })
-                        }
-                       
-        }
-   
-    </script>
-<!--<script type="text/javascript" src="empBars.js"></script>-->
-
-</html>                                        
+      var r = confirm("Are you sure you want delete this entry?");
+      if (r == true) {
+        $.ajax({
+          url: "api/empExpensesAPI.php",
+          type: "POST",
+          data: "ACTION=delete&dataId="+dataId,
+          success: function(data){
+            window.location.reload();
+          }
+        })
+      }
+    }
+  </script>
+</html>
